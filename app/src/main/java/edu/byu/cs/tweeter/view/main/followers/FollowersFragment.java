@@ -29,11 +29,11 @@ import edu.byu.cs.tweeter.view.asyncTasks.GetFollowingTask;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
 /**
- * The fragment that displays on the 'Following' tab.
+ * The fragment that displays on the 'Followers' tab.
  */
 public class FollowersFragment extends Fragment implements FollowingPresenter.View {
 
-    private static final String LOG_TAG = "FollowingFragment";
+    private static final String LOG_TAG = "FollowersFragment";
     private static final String USER_KEY = "UserKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
@@ -145,7 +145,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         private boolean isLoading = false;
 
         /**
-         * Creates an instance and loads the first page of following data.
+         * Creates an instance and loads the first page of followers data.
          */
         FollowingRecyclerViewAdapter() {
             loadMoreItems();
@@ -214,20 +214,20 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
          * Binds the followee at the specified position unless we are currently loading new data. If
          * we are loading new data, the display at that position will be the data loading footer.
          *
-         * @param followingHolder the ViewHolder to which the followee should be bound.
-         * @param position the position (in the list of followees) that contains the followee to be
+         * @param followersHolder the ViewHolder to which the follower should be bound.
+         * @param position the position (in the list of followers) that contains the follower to be
          *                 bound.
          */
         @Override
-        public void onBindViewHolder(@NonNull FollowingHolder followingHolder, int position) {
+        public void onBindViewHolder(@NonNull FollowingHolder followersHolder, int position) {
             if(!isLoading) {
-                followingHolder.bindUser(users.get(position));
+                followersHolder.bindUser(users.get(position));
             }
         }
 
         /**
-         * Returns the current number of followees available for display.
-         * @return the number of followees available for display.
+         * Returns the current number of followers available for display.
+         * @return the number of followers available for display.
          */
         @Override
         public int getItemCount() {
@@ -247,7 +247,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         }
 
         /**
-         * Causes the Adapter to display a loading footer and make a request to get more following
+         * Causes the Adapter to display a loading footer and make a request to get more followers
          * data.
          */
         void loadMoreItems() {
@@ -260,17 +260,17 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         }
 
         /**
-         * A callback indicating more following data has been received. Loads the new followees
+         * A callback indicating more followers data has been received. Loads the new followers
          * and removes the loading footer.
          *
-         * @param followingResponse the asynchronous response to the request to load more items.
+         * @param followersResponse the asynchronous response to the request to load more items.
          */
         @Override
-        public void followeesRetrieved(FollowingResponse followingResponse) {
-            List<User> followees = followingResponse.getFollowees();
+        public void followeesRetrieved(FollowingResponse followersResponse) {
+            List<User> followees = followersResponse.getFollowees();
 
             lastFollowee = (followees.size() > 0) ? followees.get(followees.size() -1) : null;
-            hasMorePages = followingResponse.getHasMorePages();
+            hasMorePages = followersResponse.getHasMorePages();
 
             isLoading = false;
             removeLoadingFooter();
