@@ -9,8 +9,10 @@ import edu.byu.cs.tweeter.BuildConfig;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
+import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.service.response.LoginResponse;
 
@@ -21,6 +23,7 @@ import edu.byu.cs.tweeter.model.service.response.LoginResponse;
 public class ServerFacade {
 
     private static Map<User, List<User>> followeesByFollower;
+    private static Map<User, List<User>> followersByFollower;
 
     /**
      * Performs a login and if successful, returns the logged in user and an auth token. The current
@@ -54,7 +57,7 @@ public class ServerFacade {
                 throw new AssertionError();
             }
 
-            if(request.getFollower() == null) {
+            if(request.getUser() == null) {
                 throw new AssertionError();
             }
         }
@@ -63,7 +66,7 @@ public class ServerFacade {
             followeesByFollower = initializeFollowees();
         }
 
-        List<User> allFollowees = followeesByFollower.get(request.getFollower());
+        List<User> allFollowees = followeesByFollower.get(request.getUser());
         List<User> responseFollowees = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -145,5 +148,108 @@ public class ServerFacade {
      */
     FollowGenerator getFollowGenerator() {
         return FollowGenerator.getInstance();
+    }
+
+//------------------------------------------------------------------------------------------------------------------------//
+
+    /**
+     * Returns the users who follow the user specified in the request. Uses information in
+     * the request object to limit the number of followers returned and to return the next set of
+     * followers after any that were returned in a previous request. The current implementation
+     * returns generated data and doesn't actually make a network request.
+     *
+     * @param request contains information about the user whose followers are to be returned and any
+     *                other information required to satisfy the request.
+     * @return the following response.
+     */
+    public FollowersResponse getFollowers(FollowersRequest request) {
+
+        // Used in place of assert statements because Android does not support them
+        if(BuildConfig.DEBUG) {
+            if(request.getLimit() < 0) {
+                throw new AssertionError();
+            }
+
+            if(request.getUser() == null) {
+                throw new AssertionError();
+            }
+        }
+
+        if(followersByFollower == null) {
+            followersByFollower = initializeFollowers();
+        }
+
+        List<User> allFollowers = followersByFollower.get(request.getUser());
+        List<User> responseFollowers = new ArrayList<>(request.getLimit());
+
+        boolean hasMorePages = false;
+
+        if(request.getLimit() > 0) {
+            if (allFollowers != null) {
+                int followersIndex = getFollowersStartingIndex(request.getLastFollower(), allFollowers);
+
+                for(int limitCounter = 0; followersIndex < allFollowers.size() && limitCounter < request.getLimit(); followersIndex++, limitCounter++) {
+                    responseFollowers.add(allFollowers.get(followersIndex));
+                }
+
+                hasMorePages = followersIndex < allFollowers.size();
+            }
+        }
+
+        return new FollowersResponse(responseFollowers, hasMorePages);
+    }
+
+    /**
+     * Determines the index for the first follower in the specified 'allFollowers' list that should
+     * be returned in the current request. This will be the index of the next follower after the
+     * specified 'lastFollower'.
+     *
+     * @param lastFollower the last follower that was returned in the previous request or null if
+     *                     there was no previous request.
+     * @param allFollowers the generated list of followers from which we are returning paged results.
+     * @return the index of the first follower to be returned.
+     */
+    private int getFollowersStartingIndex(User lastFollower, List<User> allFollowers) {
+
+        int followersIndex = 0;
+
+        if(lastFollower != null) {
+            // This is a paged request for something after the first page. Find the first item
+            // we should return
+            for (int i = 0; i < allFollowers.size(); i++) {
+                if(lastFollower.equals(allFollowers.get(i))) {
+                    // We found the index of the last item returned last time. Increment to get
+                    // to the first one we should return
+                    followersIndex = i + 1;
+                }
+            }
+        }
+
+        return followersIndex;
+    }
+
+    /**
+     * Generates the follower data.
+     */
+    private Map<User, List<User>> initializeFollowers() {
+
+        Map<User, List<User>> followersByFollower = new HashMap<>();
+
+        List<Follow> follows = getFollowGenerator().generateUsersAndFollows(100,
+                0, 50, FollowGenerator.Sort.FOLLOWER_FOLLOWEE);
+
+        // Populate a map of followers, keyed by follower so we can easily handle follower requests
+        for(Follow follow : follows) {
+            List<User> followers = followersByFollower.get(follow.getFollower());
+
+            if(followers == null) {
+                followers = new ArrayList<>();
+                followeesByFollower.put(follow.getFollower(), followers);
+            }
+
+            followers.add(follow.getFollowee());
+        }
+
+        return followersByFollower;
     }
 }
