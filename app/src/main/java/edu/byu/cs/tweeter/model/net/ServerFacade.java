@@ -8,6 +8,7 @@ import java.util.Map;
 import edu.byu.cs.tweeter.BuildConfig;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Follow;
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
@@ -24,6 +25,7 @@ public class ServerFacade {
 
     private static Map<User, List<User>> followeesByFollower;
     private static Map<User, List<User>> followersByFollower;
+    private static Map<Status, List<Status>> statusesByUser;
 
     /**
      * Performs a login and if successful, returns the logged in user and an auth token. The current
