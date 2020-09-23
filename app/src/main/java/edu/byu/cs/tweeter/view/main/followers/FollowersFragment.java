@@ -46,7 +46,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
     private AuthToken authToken;
     private FollowingPresenter presenter;
 
-    private FollowingRecyclerViewAdapter followingRecyclerViewAdapter;
+    private FollowersRecyclerViewAdapter followersRecyclerViewAdapter;
 
     /**
      * Creates an instance of the fragment and places the user and auth token in an arguments
@@ -83,8 +83,8 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         followingRecyclerView.setLayoutManager(layoutManager);
 
-        followingRecyclerViewAdapter = new FollowingRecyclerViewAdapter();
-        followingRecyclerView.setAdapter(followingRecyclerViewAdapter);
+        followersRecyclerViewAdapter = new FollowersRecyclerViewAdapter();
+        followingRecyclerView.setAdapter(followersRecyclerViewAdapter);
 
         followingRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
 
@@ -135,11 +135,11 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
     /**
      * The adapter for the RecyclerView that displays the Following data.
      */
-    private class FollowingRecyclerViewAdapter extends RecyclerView.Adapter<FollowingHolder> implements GetFollowingTask.Observer {
+    private class FollowersRecyclerViewAdapter extends RecyclerView.Adapter<FollowingHolder> implements GetFollowingTask.Observer {
 
         private final List<User> users = new ArrayList<>();
 
-        private User lastFollowee;
+        private User lastFollower;
 
         private boolean hasMorePages;
         private boolean isLoading = false;
@@ -147,7 +147,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         /**
          * Creates an instance and loads the first page of followers data.
          */
-        FollowingRecyclerViewAdapter() {
+        FollowersRecyclerViewAdapter() {
             loadMoreItems();
         }
 
@@ -255,7 +255,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
             addLoadingFooter();
 
             GetFollowingTask getFollowingTask = new GetFollowingTask(presenter, this);
-            FollowingRequest request = new FollowingRequest(user, PAGE_SIZE, lastFollowee);
+            FollowingRequest request = new FollowingRequest(user, PAGE_SIZE, lastFollower);
             getFollowingTask.execute(request);
         }
 
@@ -269,12 +269,12 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         public void followeesRetrieved(FollowingResponse followersResponse) {
             List<User> followees = followersResponse.getFollowees();
 
-            lastFollowee = (followees.size() > 0) ? followees.get(followees.size() -1) : null;
+            lastFollower = (followees.size() > 0) ? followees.get(followees.size() -1) : null;
             hasMorePages = followersResponse.getHasMorePages();
 
             isLoading = false;
             removeLoadingFooter();
-            followingRecyclerViewAdapter.addItems(followees);
+            followersRecyclerViewAdapter.addItems(followees);
         }
 
         /**
@@ -340,10 +340,10 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
             int totalItemCount = layoutManager.getItemCount();
             int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-            if (!followingRecyclerViewAdapter.isLoading && followingRecyclerViewAdapter.hasMorePages) {
+            if (!followersRecyclerViewAdapter.isLoading && followersRecyclerViewAdapter.hasMorePages) {
                 if ((visibleItemCount + firstVisibleItemPosition) >=
                         totalItemCount && firstVisibleItemPosition >= 0) {
-                    followingRecyclerViewAdapter.loadMoreItems();
+                    followersRecyclerViewAdapter.loadMoreItems();
                 }
             }
         }
