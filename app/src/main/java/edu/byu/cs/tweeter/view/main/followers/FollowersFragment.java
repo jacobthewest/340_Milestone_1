@@ -78,15 +78,15 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
 
         presenter = new FollowingPresenter(this);
 
-        RecyclerView followingRecyclerView = view.findViewById(R.id.followersRecyclerView);
+        RecyclerView followersRecyclerView = view.findViewById(R.id.followersRecyclerView);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        followingRecyclerView.setLayoutManager(layoutManager);
+        followersRecyclerView.setLayoutManager(layoutManager);
 
         followersRecyclerViewAdapter = new FollowersRecyclerViewAdapter();
-        followingRecyclerView.setAdapter(followersRecyclerViewAdapter);
+        followersRecyclerView.setAdapter(followersRecyclerViewAdapter);
 
-        followingRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
+        followersRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
 
         return view;
     }
@@ -187,7 +187,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         }
 
         /**
-         *  Creates a view holder for a followee to be displayed in the RecyclerView or for a message
+         *  Creates a view holder for a follower to be displayed in the RecyclerView or for a message
          *  indicating that new rows are being loaded if we are waiting for rows to load.
          *
          * @param parent the parent view.
@@ -211,7 +211,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         }
 
         /**
-         * Binds the followee at the specified position unless we are currently loading new data. If
+         * Binds the follower at the specified position unless we are currently loading new data. If
          * we are loading new data, the display at that position will be the data loading footer.
          *
          * @param followersHolder the ViewHolder to which the follower should be bound.
@@ -267,14 +267,14 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
          */
         @Override
         public void followeesRetrieved(FollowingResponse followersResponse) {
-            List<User> followees = followersResponse.getFollowees();
+            List<User> followers = followersResponse.getFollowees();
 
-            lastFollower = (followees.size() > 0) ? followees.get(followees.size() -1) : null;
+            lastFollower = (followers.size() > 0) ? followers.get(followers.size() -1) : null;
             hasMorePages = followersResponse.getHasMorePages();
 
             isLoading = false;
             removeLoadingFooter();
-            followersRecyclerViewAdapter.addItems(followees);
+            followersRecyclerViewAdapter.addItems(followers);
         }
 
         /**
