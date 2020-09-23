@@ -30,7 +30,7 @@ public class FollowersPresenter {
     }
 
     /**
-     * Returns the users who are following the user specified in the request. Uses information in
+     * Returns the followers of the user specified in the request. Uses information in
      * the request object to limit the number of followers returned and to return the next set of
      * followers after any that were returned in a previous request.
      *

@@ -22,16 +22,20 @@ import java.util.List;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
+import edu.byu.cs.tweeter.presenter.FollowersPresenter;
 import edu.byu.cs.tweeter.presenter.FollowingPresenter;
+import edu.byu.cs.tweeter.view.asyncTasks.GetFollowersTask;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFollowingTask;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
 /**
  * The fragment that displays on the 'Followers' tab.
  */
-public class FollowersFragment extends Fragment implements FollowingPresenter.View {
+public class FollowersFragment extends Fragment implements FollowersPresenter.View {
 
     private static final String LOG_TAG = "FollowersFragment";
     private static final String USER_KEY = "UserKey";
@@ -44,7 +48,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
 
     private User user;
     private AuthToken authToken;
-    private FollowingPresenter presenter;
+    private FollowersPresenter presenter;
 
     private FollowersRecyclerViewAdapter followersRecyclerViewAdapter;
 
@@ -76,7 +80,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
         user = (User) getArguments().getSerializable(USER_KEY);
         authToken = (AuthToken) getArguments().getSerializable(AUTH_TOKEN_KEY);
 
-        presenter = new FollowingPresenter(this);
+        presenter = new FollowersPresenter(this);
 
         RecyclerView followersRecyclerView = view.findViewById(R.id.followersRecyclerView);
 
@@ -92,9 +96,9 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
     }
 
     /**
-     * The ViewHolder for the RecyclerView that displays the Following data.
+     * The ViewHolder for the RecyclerView that displays the Followers data.
      */
-    private class FollowingHolder extends RecyclerView.ViewHolder {
+    private class FollowersHolder extends RecyclerView.ViewHolder {
 
         private final ImageView userImage;
         private final TextView userAlias;
@@ -105,7 +109,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
          *
          * @param itemView the view on which the user will be displayed.
          */
-        FollowingHolder(@NonNull View itemView) {
+        FollowersHolder(@NonNull View itemView) {
             super(itemView);
 
             userImage = itemView.findViewById(R.id.userImage);
@@ -135,7 +139,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
     /**
      * The adapter for the RecyclerView that displays the Following data.
      */
-    private class FollowersRecyclerViewAdapter extends RecyclerView.Adapter<FollowingHolder> implements GetFollowingTask.Observer {
+    private class FollowersRecyclerViewAdapter extends RecyclerView.Adapter<FollowersHolder> implements GetFollowersTask.Observer {
 
         private final List<User> users = new ArrayList<>();
 
@@ -196,7 +200,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
          */
         @NonNull
         @Override
-        public FollowingHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public FollowersHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(FollowersFragment.this.getContext());
             View view;
 
@@ -207,7 +211,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
                 view = layoutInflater.inflate(R.layout.user_row, parent, false);
             }
 
-            return new FollowingHolder(view);
+            return new FollowersHolder(view);
         }
 
         /**
@@ -219,7 +223,7 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
          *                 bound.
          */
         @Override
-        public void onBindViewHolder(@NonNull FollowingHolder followersHolder, int position) {
+        public void onBindViewHolder(@NonNull FollowersHolder followersHolder, int position) {
             if(!isLoading) {
                 followersHolder.bindUser(users.get(position));
             }
@@ -254,9 +258,9 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
             isLoading = true;
             addLoadingFooter();
 
-            GetFollowingTask getFollowingTask = new GetFollowingTask(presenter, this);
-            FollowingRequest request = new FollowingRequest(user, PAGE_SIZE, lastFollower);
-            getFollowingTask.execute(request);
+            GetFollowersTask getFollowersTask = new GetFollowersTask(presenter, this);
+            FollowersRequest request = new FollowersRequest(user, PAGE_SIZE, lastFollower);
+            getFollowersTask.execute(request);
         }
 
         /**
@@ -266,8 +270,8 @@ public class FollowersFragment extends Fragment implements FollowingPresenter.Vi
          * @param followersResponse the asynchronous response to the request to load more items.
          */
         @Override
-        public void followeesRetrieved(FollowingResponse followersResponse) {
-            List<User> followers = followersResponse.getFollowees();
+        public void followersRetrieved(FollowersResponse followersResponse) {
+            List<User> followers = followersResponse.getFollowers();
 
             lastFollower = (followers.size() > 0) ? followers.get(followers.size() -1) : null;
             hasMorePages = followersResponse.getHasMorePages();

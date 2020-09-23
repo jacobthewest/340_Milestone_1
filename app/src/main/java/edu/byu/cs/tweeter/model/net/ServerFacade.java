@@ -244,7 +244,7 @@ public class ServerFacade {
 
             if(followers == null) {
                 followers = new ArrayList<>();
-                followeesByFollower.put(follow.getFollower(), followers);
+                followersByFollower.put(follow.getFollower(), followers);
             }
 
             followers.add(follow.getFollowee());

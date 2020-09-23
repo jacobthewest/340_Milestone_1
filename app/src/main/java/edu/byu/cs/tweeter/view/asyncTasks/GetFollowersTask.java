@@ -22,7 +22,7 @@ public class GetFollowersTask extends AsyncTask<FollowersRequest, Void, Follower
      * completes.
      */
     public interface Observer {
-        void followersRetrieved(FollowersResponse followingResponse);
+        void followersRetrieved(FollowersResponse followersResponse);
         void handleException(Exception exception);
     }
 
@@ -42,7 +42,7 @@ public class GetFollowersTask extends AsyncTask<FollowersRequest, Void, Follower
     }
 
     /**
-     * The method that is invoked on the background thread to retrieve followees. This method is
+     * The method that is invoked on the background thread to retrieve followers. This method is
      * invoked indirectly by calling {@link #execute(FollowersRequest...)}.
      *
      * @param followersRequests the request object (there will only be one).
