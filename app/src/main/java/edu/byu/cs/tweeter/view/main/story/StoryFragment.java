@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import edu.byu.cs.tweeter.R;
@@ -309,7 +307,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
          * loading footer view) at the bottom of the list.
          */
         private void addLoadingFooter() {
-            addItem(new Status(null, "Statuses are loading", "", "", null, null));
+            addItem(new Status(new User("Dummy", "User", ""), "Statuses are loading", "", "", null, null));
         }
 
         /**

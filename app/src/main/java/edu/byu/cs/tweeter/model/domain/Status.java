@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.model.domain;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +21,7 @@ public class Status implements Comparable<Status>, Serializable {
     private byte [] imageBytes;
 
 
-    public Status(User user, String postText, String imageUrl, String videoUrl, Date timePosted, List<String> mentions) {
+    public Status(@NotNull User user, String postText, String imageUrl, String videoUrl, Date timePosted, List<String> mentions) {
         this.user = user;
         this.postText = postText;
         this.imageUrl = imageUrl;
