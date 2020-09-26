@@ -1,7 +1,10 @@
 package edu.byu.cs.tweeter.model.net;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -288,7 +291,7 @@ public class ServerFacade {
         Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
         List<Status> statusList = new ArrayList<>();
 
-        List<Date> timesPosted = get21Dates();
+        List<Date> timesPosted = get21DatesShuffled();
         List<String> postTexts = get21PostTexts();
         List<String> mentions = get21Mentions();
 
@@ -298,8 +301,15 @@ public class ServerFacade {
             String mention = mentions.get(i);
             List<String> mentionForStatus = new ArrayList<>();
             mentionForStatus.add(mention);
-            Date timePosted = timesPosted.get(i);
-            Status s = new Status(user, postText, MALE_IMAGE_URL, "", timePosted, mentionForStatus);
+
+            /**
+             * TODO: Work on updating the DatePrinter class. Look at this article and see if you did it right: https://mkyong.com/java/java-date-and-calendar-examples/
+             * All we want is the quickest way to print 21 dates as strings. Nothing more.
+             */
+            Calendar newCal = Calendar.getInstance();
+            newCal.set(Calendar.YEAR, date.getYear());
+
+            Status s = new Status(user, postText, "", "", tempTime, mentionForStatus);
             statusList.add(s);
         }
 
@@ -309,7 +319,7 @@ public class ServerFacade {
 
     /**
      * Gets mentions for creating statuses
-     * @return
+     * @return a list of 21 mentions
      */
     private List<String> get21Mentions() {
         List<String> mentions = new ArrayList<>();
@@ -341,19 +351,55 @@ public class ServerFacade {
      * Gets date objects for creating statuses
      * @return
      */
-    private List<Date> get21Dates() {
+    private List<Date> get21DatesShuffled() {
         List<Date> returnMe = new ArrayList<>();
-        Calendar c1 = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
+        // set(int year, int month, int date, int hourOfDay, int minute)
+        // Sets the values for the calendar fields YEAR, MONTH, DAY_OF_MONTH, HOUR_OF_DAY, and MINUTE.
+        cal.set(2020, 0, 11, 0, 13);
+        returnMe.add(cal.getTime());
+        cal.set(1996, 1, 1, 1, 4);
+        returnMe.add(cal.getTime());
+        cal.set(2012, 2, 21, 2, 13);
+        returnMe.add(cal.getTime());
+        cal.set(2013, 3, 13, 3, 56);
+        returnMe.add(cal.getTime());
+        cal.set(2007, 4, 15, 4, 43);
+        returnMe.add(cal.getTime());
+        cal.set(2000, 5, 28, 5, 13);
+        returnMe.add(cal.getTime());
+        cal.set(2018, 6, 30, 6, 12);
+        returnMe.add(cal.getTime());
+        cal.set(2017, 7, 12, 7, 21);
+        returnMe.add(cal.getTime());
+        cal.set(2016, 8, 9, 8, 5);
+        returnMe.add(cal.getTime());
+        cal.set(2015, 9, 2, 9, 59);
+        returnMe.add(cal.getTime());
+        cal.set(2014, 10, 3, 10, 33);
+        returnMe.add(cal.getTime());
+        cal.set(2013, 11, 5, 11, 30);
+        returnMe.add(cal.getTime());
+        cal.set(2009, 2, 16, 12, 17);
+        returnMe.add(cal.getTime());
+        cal.set(2010, 3, 24, 13, 9);
+        returnMe.add(cal.getTime());
+        cal.set(2015, 4, 29, 14, 3);
+        returnMe.add(cal.getTime());
+        cal.set(2014, 1, 28, 15, 31);
+        returnMe.add(cal.getTime());
+        cal.set(2003, 5, 30, 16, 11);
+        returnMe.add(cal.getTime());
+        cal.set(2002, 6, 8, 17, 36);
+        returnMe.add(cal.getTime());
+        cal.set(2001, 9, 4, 18, 29);
+        returnMe.add(cal.getTime());
+        cal.set(2019, 8, 12, 19, 1);
+        returnMe.add(cal.getTime());
+        cal.set(2005, 1, 4, 21, 2);
+        returnMe.add(cal.getTime());
 
-        c1.set(Calendar.MONTH, 6);
-        c1.set(Calendar.DATE, 11);
-        c1.set(Calendar.YEAR, 2020);
-        c1.set(Calendar.HOUR_OF_DAY, 10); // 24 hours
-
-        for(int i = 0; i < 21; i++) {
-            c1.set(Calendar.MINUTE, i);
-            returnMe.add(c1.getTime());
-        }
+        Collections.shuffle(returnMe);
         return returnMe;
     }
 

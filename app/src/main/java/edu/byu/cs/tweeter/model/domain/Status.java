@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.model.domain;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -16,12 +17,12 @@ public class Status implements Comparable<Status>, Serializable {
     private final String postText;
     private final String imageUrl;
     private final String videoUrl;
-    private final Date timePosted;
+    private final Calendar timePosted;
     private final List<String> mentions;
     private byte [] imageBytes;
 
 
-    public Status(@NotNull User user, String postText, String imageUrl, String videoUrl, Date timePosted, List<String> mentions) {
+    public Status(@NotNull User user, String postText, String imageUrl, String videoUrl, Calendar timePosted, List<String> mentions) {
         this.user = user;
         this.postText = postText;
         this.imageUrl = imageUrl;
@@ -46,7 +47,7 @@ public class Status implements Comparable<Status>, Serializable {
         return videoUrl;
     }
 
-    public Date getTimePosted() {
+    public Calendar getTimePosted() {
         return timePosted;
     }
 
