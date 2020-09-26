@@ -12,6 +12,11 @@
     <string name="followersTabTitle">Followers</string>
 
     <string name="sampleAlias">"@UserAlias"</string>
+    <string name="sampleDate">"Sep 15 2020 10:49 PM"</string>
+    <string name="sampleTweet">"Donald Trump likes to tweet too!"</string>
+    <string name="sampleImageUrl">"Image URL: https://tinyurl.com/ycup4yof"</string>
+    <string name="sampleVideoUrl">"Video URL: https://youtu.be/oHg5SJYRHA0"</string>
+    <string name="sampleMentions">"@DonaldTrump, @ElonMusk"</string>
     <string name="sampleUserName">The User</string>
     <string name="title_activity_login">Sign in</string>
     <string name="followeeCount">Following: -42</string>

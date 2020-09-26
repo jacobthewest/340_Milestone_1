@@ -2,6 +2,9 @@ package edu.byu.cs.tweeter.model.domain;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,9 +27,8 @@ public class Story {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Follow that = (Follow) o;
-        return follower.equals(that.follower) &&
-                followee.equals(that.followee);
+        Story that = (Story) o;
+        return story.equals(that.story);
     }
 
     @Override
@@ -37,9 +39,14 @@ public class Story {
     @NotNull
     @Override
     public String toString() {
-        return "Follow{" +
-                "follower=" + follower.getAlias() +
-                ", followee=" + followee.getAlias() +
-                '}';
+        Writer out = new StringWriter();
+        for(int i = 0; i < story.size(); i++) {
+            try {
+                out.write("Status text = " + story.get(i).getPostText() + "\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return out.toString();
     }
 }

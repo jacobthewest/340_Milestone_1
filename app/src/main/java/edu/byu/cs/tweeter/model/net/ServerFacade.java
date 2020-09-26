@@ -1,6 +1,8 @@
 package edu.byu.cs.tweeter.model.net;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +15,11 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
+import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.service.response.LoginResponse;
+import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 
 /**
  * Acts as a Facade to the Tweeter server. All network requests to the server should go through
@@ -25,7 +29,7 @@ public class ServerFacade {
 
     private static Map<User, List<User>> followeesByFollower;
     private static Map<User, List<User>> followersByFollower;
-    private static Map<Status, List<Status>> statusesByUser;
+    private static Map<User, List<Status>> statusesByUser;
 
     /**
      * Performs a login and if successful, returns the logged in user and an auth token. The current
@@ -152,8 +156,6 @@ public class ServerFacade {
         return FollowGenerator.getInstance();
     }
 
-//------------------------------------------------------------------------------------------------------------------------//
-
     /**
      * Returns the users who follow the user specified in the request. Uses information in
      * the request object to limit the number of followers returned and to return the next set of
@@ -228,6 +230,190 @@ public class ServerFacade {
         }
 
         return followersIndex;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------//
+
+    /**
+     * Returns the statuses of the user specified in the request. Uses information in
+     * the request object to limit the number of statuses returned and to return the next set of
+     * statuses after any that were returned in a previous request. The current implementation
+     * returns generated data and doesn't actually make a network request.
+     *
+     * @param request contains information about the user whose statuses are to be returned and any
+     *                other information required to satisfy the request.
+     * @return the following response.
+     */
+    public StoryResponse getStory(StoryRequest request) {
+
+        // Used in place of assert statements because Android does not support them
+        if(BuildConfig.DEBUG) {
+            if(request.getLimit() < 0) {
+                throw new AssertionError();
+            }
+
+            if(request.getUser() == null) {
+                throw new AssertionError();
+            }
+        }
+
+        if(statusesByUser == null) {
+            statusesByUser = getStatusList(request.getUser());
+        }
+
+        List<Status> allStatuses = statusesByUser.get(request.getUser());
+        List<Status> responseStatuses = new ArrayList<>(request.getLimit());
+
+        boolean hasMorePages = false;
+
+        if(request.getLimit() > 0) {
+            if (responseStatuses != null) {
+                int statusesIndex = getStoryStartingIndex(request.getLastStatus(), allStatuses);
+
+                for(int limitCounter = 0; statusesIndex < allStatuses.size() && limitCounter < request.getLimit(); statusesIndex++, limitCounter++) {
+                    responseStatuses.add(allStatuses.get(statusesIndex));
+                }
+
+                hasMorePages = statusesIndex < allStatuses.size();
+            }
+        }
+
+        return new StoryResponse(responseStatuses, hasMorePages);
+    }
+
+    /**
+     * Gets a list of statuses to be returned.
+     */
+    private Map<User, List<Status>> getStatusList(User user) {
+        Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
+        List<Status> statusList = new ArrayList<>();
+
+        List<Date> timesPosted = get21Dates();
+        List<String> postTexts = get21PostTexts();
+        List<String> mentions = get21Mentions();
+
+        final String MALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
+        for(int i = 0; i < 21; i++) {
+            String postText = postTexts.get(i);
+            String mention = mentions.get(i);
+            List<String> mentionForStatus = new ArrayList<>();
+            mentionForStatus.add(mention);
+            Date timePosted = timesPosted.get(i);
+            Status s = new Status(user, postText, MALE_IMAGE_URL, "", timePosted, mentionForStatus);
+            statusList.add(s);
+        }
+
+        returnMe.put(user, statusList);
+        return returnMe;
+    }
+
+    /**
+     * Gets mentions for creating statuses
+     * @return
+     */
+    private List<String> get21Mentions() {
+        List<String> mentions = new ArrayList<>();
+        mentions.add("@TomHanks");
+        mentions.add("");
+        mentions.add("");
+        mentions.add("@RusselWilson");
+        mentions.add("@LamarJackson");
+        mentions.add("");
+        mentions.add("@JerryJudy");
+        mentions.add("");
+        mentions.add("@DonaldTrump");
+        mentions.add("@ElonMusk");
+        mentions.add("@OprahWinfrey");
+        mentions.add("");
+        mentions.add("");
+        mentions.add("@Wendy's");
+        mentions.add("");
+        mentions.add("");
+        mentions.add("@JennyBriggsWest");
+        mentions.add("");
+        mentions.add("@YourMom");
+        mentions.add("");
+        mentions.add("@CountryTimeLemonade");
+        return mentions;
+    }
+
+    /**
+     * Gets date objects for creating statuses
+     * @return
+     */
+    private List<Date> get21Dates() {
+        List<Date> returnMe = new ArrayList<>();
+        Calendar c1 = Calendar.getInstance();
+
+        c1.set(Calendar.MONTH, 6);
+        c1.set(Calendar.DATE, 11);
+        c1.set(Calendar.YEAR, 2020);
+        c1.set(Calendar.HOUR_OF_DAY, 10); // 24 hours
+
+        for(int i = 0; i < 21; i++) {
+            c1.set(Calendar.MINUTE, i);
+            returnMe.add(c1.getTime());
+        }
+        return returnMe;
+    }
+
+    /**
+     * Gets post texts for creating users
+     * @return a list of texts for tweets
+     */
+    private List<String> get21PostTexts() {
+        List<String> returnMe = new ArrayList<>();
+        returnMe.add("This is my first tweet");
+        returnMe.add("How is the weather up there");
+        returnMe.add("Bears, beats, Battle Star Galactica");
+        returnMe.add("The STEM fair was crazy today! Seriously, it was all virtual, but it was still crazy.");
+        returnMe.add("Helaman 5:12");
+        returnMe.add("Telestrations is a fun game. Give it a play!");
+        returnMe.add("I like collecting house plants, succulents, and cacti");
+        returnMe.add("I bought glassware at D.I.");
+        returnMe.add("Chacos aren't basic white girl shoes, they are actually functional people!");
+        returnMe.add("Mini Wheats are on top of my fridge...");
+        returnMe.add("Trash Pandas are funny.");
+        returnMe.add("Pr0p3r Punctuat10n");
+        returnMe.add("My wife is bored and wants to hang out.");
+        returnMe.add("MyPillow is such a heavenly pillow!");
+        returnMe.add("I have a porcelain chicken");
+        returnMe.add("My hands hurt from typing");
+        returnMe.add("I got a new phone case.....................................");
+        returnMe.add("Silicone rings are more comfortable than metal rings");
+        returnMe.add("My sisters and mom don't have Covid!");
+        returnMe.add("I'm going to the gym tomorrow");
+        returnMe.add("I need to water my plants now.");
+        return returnMe;
+    }
+
+    /**
+     * Determines the index for the first status in the specified 'allStatuses' list that should
+     * be returned in the current request. This will be the index of the next status after the
+     * specified 'lastStatus'.
+     *
+     * @param lastStatus the last follower that was returned in the previous request or null if
+     *                     there was no previous request.
+     * @param allStatuses the generated list of followers from which we are returning paged results.
+     * @return the index of the first follower to be returned.
+     */
+    private int getStoryStartingIndex(Status lastStatus, List<Status> allStatuses) {
+
+        int statusesIndex = 0;
+
+        if(lastStatus != null) {
+            // This is a paged request for something after the first page. Find the first item
+            // we should return
+            for (int i = 0; i < allStatuses.size(); i++) {
+                if(lastStatus.equals(allStatuses.get(i))) {
+                    // We found the index of the last item returned last time. Increment to get
+                    // to the first one we should return
+                    statusesIndex = i + 1;
+                }
+            }
+        }
+
+        return statusesIndex;
     }
 
     /**

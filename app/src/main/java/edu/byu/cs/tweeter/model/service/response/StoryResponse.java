@@ -22,10 +22,10 @@ public class StoryResponse extends PagedResponse {
     /**
      * Creates a response indicating that the corresponding request was successful.
      *
-     * @param story the statuses to be included in the result.
+     * @param statuses the statuses to be included in the result.
      * @param hasMorePages an indicator of whether more data is available for the request.
      */
-    public StoryResponse(List<Status> story, boolean hasMorePages) {
+    public StoryResponse(List<Status> statuses, boolean hasMorePages) {
         super(true, hasMorePages);
         this.statuses = statuses;
     }
@@ -49,15 +49,15 @@ public class StoryResponse extends PagedResponse {
             return false;
         }
 
-        FollowingResponse that = (FollowingResponse) param;
+        StoryResponse that = (StoryResponse) param;
 
-        return (Objects.equals(followees, that.followees) &&
+        return (Objects.equals(statuses, that.statuses) &&
                 Objects.equals(this.getMessage(), that.getMessage()) &&
                 this.isSuccess() == that.isSuccess());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(story);
+        return Objects.hash(statuses);
     }
 }
