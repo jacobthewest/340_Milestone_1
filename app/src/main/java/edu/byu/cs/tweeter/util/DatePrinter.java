@@ -1,7 +1,5 @@
 package edu.byu.cs.tweeter.util;
 
-import android.security.ConfirmationAlreadyPresentingException;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -14,7 +12,7 @@ public class DatePrinter {
     private Calendar calendar;
     private final int LAST_AM_HOUR  = 11;
     private final int NOON = 12;
-    private final int MIDNIGHT = 12;
+    private final int MIDNIGHT = 0;
     private final int DOUBLE_DIGIT_NUMBER = 10;
 
     public DatePrinter(Calendar cal) {
@@ -27,6 +25,8 @@ public class DatePrinter {
      */
     public String toString() {
         Writer out = new StringWriter();
+        //SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm");
+
         try {
             out.write(getMonth() + " " + getDay() + " " + getYear() + " " + getTime() + " " + getAmPm());
         } catch (IOException e) {
