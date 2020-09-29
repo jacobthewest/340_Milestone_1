@@ -144,10 +144,11 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
         void bindStatus(Status status) {
             String tempPostText = formulatePostText(status);
             String tempTimePosted = formulateTimePosted(status.getTimePosted());
+            User statusUser = status.getUser();
 
             userImage.setImageDrawable(ImageUtils.drawableFromByteArray(user.getImageBytes()));
-            userAlias.setText(user.getAlias());
-            userName.setText(user.getName());
+            userAlias.setText(statusUser.getAlias());
+            userName.setText(statusUser.getName());
             postText.setText(tempPostText);
             timePosted.setText(tempTimePosted);
         }

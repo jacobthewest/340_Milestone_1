@@ -16,7 +16,7 @@ public class FeedRequest {
     /**
      * Creates an instance.
      *
-     * @param user the {@link User} whose statuses are to be returned.
+     * @param user the {@link User} whose following statuses are to be returned.
      * @param limit the maximum number of statuses to return.
      * @param lastStatus the last status that was returned in the previous request (null if
      *                     there was no previous request or if no statuses were returned in the

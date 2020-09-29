@@ -464,28 +464,28 @@ public class ServerFacade {
      */
     private List<User> get21Users() {
         List<User> returnMe = new ArrayList<>();
-
-        returnMe.add(new User("Rick", "James", "https://i.imgur.com/VZQQiQ1.jpg"));
-        returnMe.add(new User("Mother", "Teresa", "https://tinyurl.com/yyuhyxtq"));
-        returnMe.add(new User("Jenny", "Briggs", "https://tinyurl.com/y4etkgz3"));
-        returnMe.add(new User("Lebron", "James", "https://tinyurl.com/y5mn7sb8"));
-        returnMe.add(new User("Tom", "Hanks", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Asian", "Lady", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Pretty", "Boy", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Chicken", "Licken", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Bucktooth", "Baby", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Skooby", "Doo", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Kevin", "West", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Rachel", "West", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Albert", "Eistein", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Brett", "West", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Bien", "Choro", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Donald", "Trump", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Sam", "Wright", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Sponge", "Bob", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Nacho", "Libre", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Homer", "Simpson", "https://tinyurl.com/y3gbuq4e"));
-        returnMe.add(new User("Lord", "Farquaad", "https://tinyurl.com/y3gbuq4e"));
+        String MIKE = "https://i.imgur.com/VZQQiQ1.jpg";
+        returnMe.add(new User("Rick", "James", MIKE));
+        returnMe.add(new User("Mother", "Teresa", MIKE));
+        returnMe.add(new User("Jenny", "Briggs", MIKE));
+        returnMe.add(new User("Lebron", "James", MIKE));
+        returnMe.add(new User("Tom", "Hanks", MIKE));
+        returnMe.add(new User("Asian", "Lady", MIKE));
+        returnMe.add(new User("Pretty", "Boy", MIKE));
+        returnMe.add(new User("Chicken", "Licken", MIKE));
+        returnMe.add(new User("Bucktooth", "Baby", MIKE));
+        returnMe.add(new User("Skooby", "Doo", MIKE));
+        returnMe.add(new User("Kevin", "West", MIKE));
+        returnMe.add(new User("Rachel", "West", MIKE));
+        returnMe.add(new User("Albert", "Eistein", MIKE));
+        returnMe.add(new User("Brett", "West", MIKE));
+        returnMe.add(new User("Bien", "Choro", MIKE));
+        returnMe.add(new User("Donald", "Trump", MIKE));
+        returnMe.add(new User("Sam", "Wright", MIKE));
+        returnMe.add(new User("Sponge", "Bob", MIKE));
+        returnMe.add(new User("Nacho", "Libre", MIKE));
+        returnMe.add(new User("Homer", "Simpson", MIKE));
+        returnMe.add(new User("Lord", "Farquaad", MIKE));
 
         Collections.shuffle(returnMe);
         return returnMe;
