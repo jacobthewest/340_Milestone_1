@@ -1,23 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".view.LoginActivity">
 
-    <TextView
+    <EditText
+        android:id="@+id/userNameLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="An almost completely unimplemented login activity. Replace this with your own and update the code in LoginService."
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        android:layout_above="@id/LoginButton"/>
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:hint="@string/firstName"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/passwordLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:hint="@string/password"
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/LoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Push this Button to Login with a Hard-Coded User"
-        android:layout_centerInParent="true"/>
-</RelativeLayout>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="Login w/ Hard coded User" />
+
+    <EditText
+        android:id="@+id/firstName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:hint="@string/firstName"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/lastName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:hint="@string/lastName"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/userNameRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:hint="@string/sampleUserName"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/passwordRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:hint="@string/password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/RegisterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="Register" />
+</LinearLayout>

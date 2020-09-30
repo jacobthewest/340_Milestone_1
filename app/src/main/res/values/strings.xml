@@ -21,4 +21,9 @@
     <string name="title_activity_login">Sign in</string>
     <string name="followeeCount">Following: -42</string>
     <string name="followerCount">Followers: -42</string>
+
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="userName">\@username</string>
+    <string name="password">Password</string>
 </resources>
