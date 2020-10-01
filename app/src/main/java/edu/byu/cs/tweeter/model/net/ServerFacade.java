@@ -17,11 +17,13 @@ import edu.byu.cs.tweeter.model.service.request.FeedRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
+import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.service.response.LoginResponse;
+import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 
 /**
@@ -48,6 +50,19 @@ public class ServerFacade {
         //"https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
         User user = new User("Test", "User", "https://i.imgur.com/VZQQiQ1.jpg");
         return new LoginResponse(user, new AuthToken());
+    }
+
+    /**
+     * Performs a register and if successful, returns the registered user and an auth token. The current
+     * implementation is hard-coded to return a dummy user and doesn't actually make a network
+     * request.
+     *
+     * @param request contains all information needed to perform a login.
+     * @return the register response.
+     */
+    public RegisterResponse register(RegisterRequest request) {
+        User user = new User(request.getFirstName(), request.getLastName(), request.getImageUrl());
+        return new RegisterResponse(user, new AuthToken());
     }
 
     /**

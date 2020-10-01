@@ -10,6 +10,8 @@
     <string name="storyTabTitle">Story</string>
     <string name="followingTabTitle">Following</string>
     <string name="followersTabTitle">Followers</string>
+    <string name="loginTabTitle">Followers</string>
+    <string name="registerTabTitle">Followers</string>
 
     <string name="sampleAlias">"@UserAlias"</string>
     <string name="sampleDate">"Sep 15 2020 10:49 PM"</string>

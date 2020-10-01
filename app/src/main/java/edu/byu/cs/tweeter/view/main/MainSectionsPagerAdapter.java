@@ -20,7 +20,7 @@ import edu.byu.cs.tweeter.view.main.following.FollowingFragment;
  * A [FragmentPagerAdapter] that returns a fragment corresponding to one of the sections/tabs/pages
  * of the Main Activity.
  */
-class SectionsPagerAdapter extends FragmentPagerAdapter {
+class MainSectionsPagerAdapter extends FragmentPagerAdapter {
 
     private static final int FEED_FRAGMENT_POSITION = 0;
     private static final int STORY_FRAGMENT_POSITION = 1;
@@ -33,7 +33,7 @@ class SectionsPagerAdapter extends FragmentPagerAdapter {
     private final User user;
     private final AuthToken authToken;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm, User user, AuthToken authToken) {
+    public MainSectionsPagerAdapter(Context context, FragmentManager fm, User user, AuthToken authToken) {
         super(fm);
         mContext = context;
         this.user = user;
@@ -51,7 +51,7 @@ class SectionsPagerAdapter extends FragmentPagerAdapter {
         } else if (position == FOLLOWERS_FRAGMENT_POSITION) {
             return FollowersFragment.newInstance(user, authToken);
         } else {
-            return PlaceholderFragment.newInstance(position + 1);
+            return MainPlaceholderFragment.newInstance(position + 1);
         }
     }
 
