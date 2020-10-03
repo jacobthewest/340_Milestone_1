@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:autofillHints=""
-        android:hint="@string/firstName"
+        android:hint="@string/userName"
         android:inputType="text" />
 
     <EditText

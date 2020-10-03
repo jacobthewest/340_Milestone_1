@@ -70,34 +70,7 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
                 }
             }
         });
-
-//        registerButton.setOnClickListener(new View.OnClickListener() {
-//            /**
-//             * Makes a Register request. The user is hard-coded, so it doesn't matter what data we put
-//             * in the RegisterRequest object.
-//             *
-//             * @param view the view object that was clicked.
-//             */
-//            @Override
-//            public void onClick(View view) {
-//                String toastText = "";
-//                Toast registerToast = null;
-//                if(isEmpty(userNameRegister) || isEmpty(passwordRegister) || isEmpty(firstName) || isEmpty(lastName)) {
-//                    registerToast = Toast.makeText(RegisterActivity.this, "First Name, Last Name, Username, and Password values can't be empty" , Toast.LENGTH_LONG);
-//                    registerToast.show();
-//                } else {
-//                    registerToast = Toast.makeText(RegisterActivity.this, "Registering User", Toast.LENGTH_LONG);
-//                    registerToast.show();
-//                    // It doesn't matter what values we put here. We will be logged in with a hard-coded dummy user.
-//                    RegisterRequest registerRequest = new RegisterRequest("dummyUserName", "dummyPassword");
-//                    RegisterTask registerTask = new RegisterTask(presenter, LoginActivity.this);
-//                    registerTask.execute(loginRequest);
-//                }
-//            }
-//        });
     }
-
-
 
     /**
      * The callback method that gets invoked for a successful login. Displays the MainActivity.

@@ -284,6 +284,10 @@ public class ServerFacade {
 
         boolean hasMorePages = false;
 
+        if (allStatuses == null) {
+            return new StoryResponse(responseStatuses, hasMorePages);
+        }
+
         if(request.getLimit() > 0) {
             if (responseStatuses != null) {
                 int statusesIndex = getStoryStartingIndex(request.getLastStatus(), allStatuses);
@@ -331,6 +335,10 @@ public class ServerFacade {
 
         boolean hasMorePages = false;
 
+        if (allStatuses == null) {
+            return new FeedResponse(responseStatuses, hasMorePages);
+        }
+
         if(request.getLimit() > 0) {
             if (responseStatuses != null) {
                 int statusesIndex = getFeedStartingIndex(request.getLastStatus(), allStatuses);
@@ -352,6 +360,12 @@ public class ServerFacade {
     private Map<User, List<Status>> getFeedStatusList(User user) {
         Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
         List<Status> statusList = new ArrayList<>();
+
+        // Here to make a newly registered user have no followers/followees
+        if(!user.getFirstName().equals("Test") || !user.getLastName().equals("User")) {
+            returnMe.put(new User("new", "regristration", ""), statusList);
+            return returnMe;
+        }
 
         List<Date> timesPosted = get21DatesShuffled();
         List<String> postTexts = get21PostTexts();
@@ -381,6 +395,12 @@ public class ServerFacade {
     private Map<User, List<Status>> getStoryStatusList(User user) {
         Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
         List<Status> statusList = new ArrayList<>();
+
+        // Here to make a newly registered user have no followers/followees
+        if(!user.getFirstName().equals("Test") || !user.getLastName().equals("User")) {
+            returnMe.put(new User("", "", ""), statusList);
+            return returnMe;
+        }
 
         List<Date> timesPosted = get21DatesShuffled();
         List<String> postTexts = get21PostTexts();

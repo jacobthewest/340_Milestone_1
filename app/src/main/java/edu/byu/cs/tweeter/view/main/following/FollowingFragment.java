@@ -273,7 +273,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             lastFollowee = (followees.size() > 0) ? followees.get(followees.size() -1) : null;
             hasMorePages = followingResponse.getHasMorePages();
 
-            isLoading = false;
+            isLoading   = false;
             removeLoadingFooter();
             followingRecyclerViewAdapter.addItems(followees);
         }

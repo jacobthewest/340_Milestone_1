@@ -5,13 +5,14 @@
     <string name="userImageContentDescription">The user\'s image</string>
 
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_home">HomeActivity</string>
     <string name="loadingData">Loading More Data…</string>
     <string name="feedTabTitle">Feed</string>
     <string name="storyTabTitle">Story</string>
     <string name="followingTabTitle">Following</string>
     <string name="followersTabTitle">Followers</string>
-    <string name="loginTabTitle">Followers</string>
-    <string name="registerTabTitle">Followers</string>
+    <string name="loginTabTitle">Login</string>
+    <string name="registerTabTitle">Register</string>
 
     <string name="sampleAlias">"@UserAlias"</string>
     <string name="sampleDate">"Sep 15 2020 10:49 PM"</string>
