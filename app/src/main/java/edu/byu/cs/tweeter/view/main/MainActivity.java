@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.view.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -10,12 +11,14 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.view.HomeActivity;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
 /**
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(mainSectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-
+        Button logoutButton = findViewById(R.id.logoutButton);
         FloatingActionButton fab = findViewById(R.id.fab);
 
         // We should use a Java 8 lambda function for the listener (and all other listeners), but
@@ -53,6 +56,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish(); // This call is missing.
             }
         });
 
