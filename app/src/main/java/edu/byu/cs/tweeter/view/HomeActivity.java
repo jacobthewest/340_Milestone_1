@@ -53,7 +53,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 }
 
-
 //---------------Here is the previous Login Activity ----------------------//
 //
 ///**

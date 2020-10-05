@@ -138,7 +138,6 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
                 e.printStackTrace();
             }
 
-
         } else {
             Toast.makeText(getContext(), "Image upload failed, try a different image.", Toast.LENGTH_SHORT).show();
         }

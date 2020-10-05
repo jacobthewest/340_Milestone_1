@@ -17,12 +17,14 @@ import edu.byu.cs.tweeter.model.service.request.FeedRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
+import edu.byu.cs.tweeter.model.service.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.service.response.LoginResponse;
+import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
 import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 
@@ -46,10 +48,34 @@ public class ServerFacade {
      * @return the login response.
      */
     public LoginResponse login(LoginRequest request) {
-
         //"https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
         User user = new User("Test", "User", "https://i.imgur.com/VZQQiQ1.jpg");
-        return new LoginResponse(user, new AuthToken());
+        return new LoginResponse(user, new AuthToken(user.getAlias()));
+    }
+
+    /**
+     * Performs a logout and if successful, returns the logged out user and the expired auth token. The current
+     * implementation is hard-coded to return a dummy user and doesn't actually make a network
+     * request.
+     *
+     * @param request contains all information needed to perform a login.
+     * @return the login response.
+     */
+    public LogoutResponse logout(LogoutRequest request) {
+        User user = request.getUser();
+        AuthToken authToken = getAuthTokenByUsername(user.getAlias(), request.getAuthToken()); // Will be replaced with a server call later on.
+        authToken.deactivate();
+        return new LogoutResponse(user, authToken);
+    }
+
+    /**
+     *
+     * @param userName of the user to logout
+     * @param authToken just needed for the non-server implemented functionality.
+     * @return
+     */
+    public AuthToken getAuthTokenByUsername(String userName, AuthToken authToken) {
+        return authToken;
     }
 
     /**
@@ -62,7 +88,7 @@ public class ServerFacade {
      */
     public RegisterResponse register(RegisterRequest request) {
         User user = new User(request.getFirstName(), request.getLastName(), request.getImageUrl(), request.getImageBytes());
-        return new RegisterResponse(user, new AuthToken());
+        return new RegisterResponse(user, new AuthToken(user.getAlias()));
     }
 
     /**
