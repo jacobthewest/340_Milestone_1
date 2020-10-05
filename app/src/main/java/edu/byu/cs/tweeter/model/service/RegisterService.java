@@ -30,8 +30,15 @@ public class RegisterService {
      * @param user the user whose profile image data is to be loaded.
      */
     private void loadImage(User user) throws IOException {
-        byte [] bytes = ByteArrayUtils.bytesFromUrl(user.getImageUrl());
-        user.setImageBytes(bytes);
+        byte[] preExistingBytes = user.getImageBytes();
+        byte [] bytes;
+        if(preExistingBytes != null) {
+            preExistingBytes = user.getImageBytes();
+            user.setImageBytes(preExistingBytes);
+        } else {
+            bytes = ByteArrayUtils.bytesFromUrl(user.getImageUrl());
+            user.setImageBytes(bytes);
+        }
     }
 
     /**

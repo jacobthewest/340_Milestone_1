@@ -61,7 +61,7 @@ public class ServerFacade {
      * @return the register response.
      */
     public RegisterResponse register(RegisterRequest request) {
-        User user = new User(request.getFirstName(), request.getLastName(), request.getImageUrl());
+        User user = new User(request.getFirstName(), request.getLastName(), request.getImageUrl(), request.getImageBytes());
         return new RegisterResponse(user, new AuthToken());
     }
 

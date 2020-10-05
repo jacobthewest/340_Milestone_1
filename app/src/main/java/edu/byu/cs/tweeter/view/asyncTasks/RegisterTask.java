@@ -72,12 +72,18 @@ public class RegisterTask extends AsyncTask<RegisterRequest, Void, RegisterRespo
      * @param user the user whose profile image is to be loaded.
      */
     private void loadImage(User user) {
-        try {
-            byte [] bytes = ByteArrayUtils.bytesFromUrl(user.getImageUrl());
-            user.setImageBytes(bytes);
-        } catch (IOException e) {
-            Log.e(this.getClass().getName(), e.toString(), e);
-        }
+        // TODO: I changed this to get the user's set image bytes that we DID NOT get from the imageURL from the server.
+        // we will probably have to load that manually from the server, but for Milestone #2, I'm just using the image
+        // locally.
+//        try {
+        byte [] bytes = user.getImageBytes();
+        user.setImageBytes(bytes);
+//                ***Old code below*** Includes the try catch
+//                byte [] bytes = ByteArrayUtils.bytesFromUrl(user.getImageUrl());
+//                user.setImageBytes(bytes);
+//        } catch (IOException e) {
+//            Log.e(this.getClass().getName(), e.toString(), e);
+//        }
     }
 
     /**

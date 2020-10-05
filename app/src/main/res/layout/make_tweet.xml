@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".view.main.make_tweet.MakeTweet">
+
+<!--    <EditText-->
+<!--        android:id="@+id/tweetText"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="@string/makeTweet"-->
+<!--        android:padding="20dp" />-->
+
+<!--    <RelativeLayout-->
+<!--        android:id="@+id/tweetButtonsRelativeLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_toEndOf="@id/tweetText"-->
+<!--        android:orientation="vertical">-->
+
+<!--        <Button-->
+<!--            android:id="@+id/cancelTweetButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_toLeftOf="@+id/postTweetButton"-->
+<!--            android:text="@string/cancelTweet" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/postTweetButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_toRightOf="@+id/cancelTweetButton"-->
+<!--            android:text="@string/postTweet" />-->
+
+<!--    </RelativeLayout>-->
+
+</RelativeLayout>

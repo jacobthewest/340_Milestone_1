@@ -31,5 +31,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
-
+    
+    <permission android:name="android.permission.INTERNET"/>
+    <permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 </manifest>

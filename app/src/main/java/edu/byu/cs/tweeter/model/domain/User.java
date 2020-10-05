@@ -18,11 +18,23 @@ public class User implements Comparable<User>, Serializable {
         this(firstName, lastName, String.format("@%s%s", firstName, lastName), imageURL);
     }
 
+    public User(String firstName, String lastName, String imageURL, byte[] imageBytes) {
+        this(firstName, lastName, String.format("@%s%s", firstName, lastName), imageURL, imageBytes);
+    }
+
     public User(String firstName, String lastName, String alias, String imageURL) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.alias = alias;
         this.imageUrl = imageURL;
+    }
+
+    public User(String firstName, String lastName, String alias, String imageURL, byte[] imageBytes) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.alias = alias;
+        this.imageUrl = imageURL;
+        this.imageBytes = imageBytes;
     }
 
     public String getFirstName() {
