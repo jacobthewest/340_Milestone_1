@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.util;
+package edu.byu.cs.tweeter.view.util;
 
 import java.io.IOException;
 import java.io.StringWriter;

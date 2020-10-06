@@ -4,36 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".view.main.make_tweet.MakeTweet">
+    tools:context=".view.main.tweet.TweetFragment">
+    <LinearLayout
+        android:id="@+id/tweetButtonsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:weightSum="2">
 
-<!--    <EditText-->
-<!--        android:id="@+id/tweetText"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="@string/makeTweet"-->
-<!--        android:padding="20dp" />-->
+        <Button
+            android:id="@+id/cancelTweetButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:text="@string/cancelTweet" />
 
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/tweetButtonsRelativeLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_toEndOf="@id/tweetText"-->
-<!--        android:orientation="vertical">-->
+        <Button
+            android:id="@+id/postTweetButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:text="@string/postTweet" />
+    </LinearLayout>
 
-<!--        <Button-->
-<!--            android:id="@+id/cancelTweetButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_toLeftOf="@+id/postTweetButton"-->
-<!--            android:text="@string/cancelTweet" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/postTweetButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_toRightOf="@+id/cancelTweetButton"-->
-<!--            android:text="@string/postTweet" />-->
-
-<!--    </RelativeLayout>-->
+    <EditText
+        android:id="@+id/tweetText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:hint="@string/makeTweet"
+        android:padding="20dp" />
 
 </RelativeLayout>

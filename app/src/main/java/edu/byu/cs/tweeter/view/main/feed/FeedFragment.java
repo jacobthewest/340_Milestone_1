@@ -29,7 +29,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.service.request.FeedRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
 import edu.byu.cs.tweeter.presenter.FeedPresenter;
-import edu.byu.cs.tweeter.util.DatePrinter;
+import edu.byu.cs.tweeter.view.util.DatePrinter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFeedTask;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
@@ -163,16 +163,17 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             String imageUrl = "";
             String videoUrl = "";
 
-            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
-                imageUrl = "\nImage URL: " + status.getImageUrl();
-            }
-
-            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
-                videoUrl = "\nVideo URL: " + status.getVideoUrl();
-            }
+//            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
+//                imageUrl = "\nImage URL: " + status.getImageUrl();
+//            }
+//
+//            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
+//                videoUrl = "\nVideo URL: " + status.getVideoUrl();
+//            }
 
             try {
-                out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
+                //out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
+                out.write(status.getTweetText() + imageUrl + videoUrl);
                 boolean mentionsPrinted = false;
                 List<String> mentions = status.getMentions();
                 for(int i = 0; i < mentions.size(); i++) {
@@ -366,7 +367,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             String imageUrl = "https://preview.tinyurl.com/yxrxp5d2";
             String videoUrl = "https://youtu.be/oHg5SJYRHA0";
             String postUrl = "Statuses are loading";
-            addItem(new Status(new User("Dummy", "User", ""), postUrl, imageUrl, videoUrl, timePosted, mentions));
+            addItem(new Status(new User("Dummy", "User", ""), postUrl, null, timePosted, mentions));
         }
 
         /**

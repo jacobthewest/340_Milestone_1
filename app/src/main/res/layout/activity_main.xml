@@ -107,6 +107,12 @@
             android:background="?attr/colorPrimary" />
     </com.google.android.material.appbar.AppBarLayout>
 
+<!--    <fragment-->
+<!--        android:id="@+id/tweetFragment"-->
+<!--        android:tag="dialog"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="match_parent"/>-->
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"

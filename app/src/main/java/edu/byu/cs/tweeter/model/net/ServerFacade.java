@@ -20,6 +20,7 @@ import edu.byu.cs.tweeter.model.service.request.LoginRequest;
 import edu.byu.cs.tweeter.model.service.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
+import edu.byu.cs.tweeter.model.service.request.SubmitTweetRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
@@ -27,6 +28,7 @@ import edu.byu.cs.tweeter.model.service.response.LoginResponse;
 import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
 import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
+import edu.byu.cs.tweeter.model.service.response.SubmitTweetResponse;
 
 /**
  * Acts as a Facade to the Tweeter server. All network requests to the server should go through
@@ -38,6 +40,16 @@ public class ServerFacade {
     private static Map<User, List<User>> followersByFollower;
     private static Map<User, List<Status>> statusesByUser;
     private static Map<User, List<Status>> feedStatuses;
+
+    /**
+     * Performs a save of the status to the database. This function doesn't actually make a network request.
+     *
+     * @param request contains all information needed to save a status.
+     * @return the submit tweet response.
+     */
+    public SubmitTweetResponse submitTweet(SubmitTweetRequest request) {
+        return new SubmitTweetResponse(request.getUser(), request.getStatus());
+    }
 
     /**
      * Performs a login and if successful, returns the logged in user and an auth token. The current
@@ -407,7 +419,7 @@ public class ServerFacade {
             Calendar tempTime = Calendar.getInstance();
             tempTime.setTime(d);
             User tempUser = users.get(i);
-            Status s = new Status(tempUser, postText, "", "", tempTime, mentionForStatus);
+            Status s = new Status(tempUser, postText, null, tempTime, mentionForStatus);
             statusList.add(s);
         }
 
@@ -441,7 +453,7 @@ public class ServerFacade {
             Date d = timesPosted.get(i);
             Calendar tempTime = Calendar.getInstance();
             tempTime.setTime(d);
-            Status s = new Status(user, postText, "", "", tempTime, mentionForStatus);
+            Status s = new Status(user, postText, null, tempTime, mentionForStatus);
             statusList.add(s);
         }
 

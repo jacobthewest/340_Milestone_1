@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -28,6 +30,7 @@ import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
 import edu.byu.cs.tweeter.presenter.RegisterPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.RegisterTask;
 import edu.byu.cs.tweeter.view.main.MainActivity;
+import edu.byu.cs.tweeter.view.util.AliasChecker;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -48,7 +51,6 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
     private Toast registerToast;
     private ImageView imageToUpload;
     private byte [] imageBytes;
-
 
     /**
      * Creates an instance of the fragment and places the user and auth token in an arguments
@@ -91,11 +93,10 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
             public void onClick(View view) {
                 String toastText = "";
                 if(isEmpty(userNameRegister) || isEmpty(passwordRegister) || isEmpty(firstName) || isEmpty(lastName) || imageBytes == null) {
-                    registerToast = Toast.makeText(getActivity(), "First Name, Last Name, Username, Password, " +
-                            "and Profile Pic must all be filled out" , Toast.LENGTH_LONG);
+                    registerToast = Toast.makeText(getActivity(), "All fields must be filled out" , Toast.LENGTH_LONG);
                     registerToast.show();
-                } else if (!hasAtSymbol(userNameRegister)) {
-                    registerToast = Toast.makeText(getActivity(), "Username must start with the @ symbol" , Toast.LENGTH_LONG);
+                } else if (!isValidAlias(userNameRegister)) {
+                    registerToast = Toast.makeText(getActivity(), "Username must have the @ symbol, be < 16 characters, and contain no special characters." , Toast.LENGTH_LONG);
                     registerToast.show();
                 } else {
                     registerToast = Toast.makeText(getActivity(), "Registering User", Toast.LENGTH_LONG);
@@ -156,17 +157,10 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
         return new RegisterRequest(userNameString, passwordString, firstNameString, lastNameString, imageUrl, imageBytes);
     }
 
-    /**
-     * Checks to make sure the username is of the correct format
-     * @param text The username
-     * @return True if the format works, false if not.
-     */
-    private boolean hasAtSymbol(EditText text) {
-        CharSequence str = text.getText().toString();
-        char result = str.charAt(0);
-        if (result == '@') {
-            return true;
-        }
+    private boolean isValidAlias(EditText username) {
+        AliasChecker aliasChecker = new AliasChecker(username);
+        if(isEmpty(username)) {return false;}
+        if(aliasChecker.isValid()) {return true;}
         return false;
     }
 

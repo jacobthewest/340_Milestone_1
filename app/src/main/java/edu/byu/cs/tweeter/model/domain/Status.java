@@ -14,19 +14,17 @@ import java.util.Objects;
 public class Status implements Comparable<Status>, Serializable {
 
     private final User user;
-    private final String postText;
-    private final String imageUrl;
-    private final String videoUrl;
+    private final String tweetText;
+    private final List<String> urls;
     private final Calendar timePosted;
     private final List<String> mentions;
     private byte [] imageBytes;
 
 
-    public Status(@NotNull User user, String postText, String imageUrl, String videoUrl, Calendar timePosted, List<String> mentions) {
+    public Status(@NotNull User user, String postText, List<String> urls, Calendar timePosted, List<String> mentions) {
         this.user = user;
-        this.postText = postText;
-        this.imageUrl = imageUrl;
-        this.videoUrl = videoUrl;
+        this.tweetText = postText;
+        this.urls = urls;
         this.timePosted = timePosted;
         this.mentions = mentions;
     }
@@ -35,16 +33,12 @@ public class Status implements Comparable<Status>, Serializable {
         return user;
     }
 
-    public String getPostText() {
-        return postText;
+    public String getTweetText() {
+        return tweetText;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public String getVideoUrl() {
-        return videoUrl;
+    public List<String> getUrls() {
+        return urls;
     }
 
     public Calendar getTimePosted() {
@@ -70,16 +64,15 @@ public class Status implements Comparable<Status>, Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Status status = (Status) o;
         return user.getAlias().equals(status.user.getAlias()) &&
-                postText.equals(status.getPostText()) &&
-                imageUrl.equals(status.getImageUrl()) &&
-                videoUrl.equals(status.getVideoUrl()) &&
+                tweetText.equals(status.getTweetText()) &&
+                urls.equals(status.getUrls()) &&
                 timePosted.equals(status.getTimePosted()) &&
                 mentions.equals(status.getMentions());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, postText, imageUrl, videoUrl, timePosted, mentions);
+        return Objects.hash(user, tweetText, urls, timePosted, mentions);
     }
 
     @Override
@@ -88,9 +81,8 @@ public class Status implements Comparable<Status>, Serializable {
                 "firstName='" + user.getFirstName() + '\'' +
                 ", lastName='" + user.getLastName() + '\'' +
                 ", alias='" + user.getAlias() + '\'' +
-                ", postText='" + postText + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", videoUrl='" + videoUrl + '\'' +
+                ", postText='" + tweetText + '\'' +
+                ", urls='" + urls.toString() + '\'' +
                 ", timePosted='" + timePosted.toString() + '\'' +
                 ", mentions='" + mentions.toString() + '\'' +
                 '}';

@@ -1,20 +1,25 @@
 package edu.byu.cs.tweeter.view.main;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.tv.TvContract;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +32,7 @@ import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
 import edu.byu.cs.tweeter.view.HomeActivity;
 import edu.byu.cs.tweeter.view.asyncTasks.LogoutTask;
-import edu.byu.cs.tweeter.view.main.make_tweet.MakeTweet;
+import edu.byu.cs.tweeter.view.main.tweet.TweetFragment;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
 /**
@@ -41,7 +46,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
     private User user;
     private AuthToken authToken;
     private MainPresenter presenter;
-
+    private FragmentTransaction fragmentTransaction;
+    private DialogFragment dialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,16 +69,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         FloatingActionButton fab = findViewById(R.id.fab);
         presenter = new MainPresenter(this);
 
-
-        // We should use a Java 8 lambda function for the listener (and all other listeners), but
-        // they would be unfamiliar to many students who use this code.
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                MakeTweet dialog = new MakeTweet(MainActivity.this);
-                dialog.show();
+                showDialog();
             }
         });
 
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
             @Override
             public void onClick(View v) {
                 LogoutRequest logoutRequest = getLogoutRequest();
-                LogoutTask logoutTask = new LogoutTask(presenter, getObserver()); // TODO: Make this work too
+                LogoutTask logoutTask = new LogoutTask(presenter, getObserver());
                 logoutTask.execute(logoutRequest);
             }
         });
@@ -101,15 +101,27 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         followerCount.setText("Followers: " + "-42");
     }
 
+    private void showDialog() {
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        this.fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            fragmentTransaction.remove(prev);
+        }
+        fragmentTransaction.addToBackStack(null);
+
+        // Create and show the dialog.
+        dialogFragment = new TweetFragment(user);
+        dialogFragment.show(fragmentTransaction, "dialog");
+    }
+
     /**
      * Used to get the observer implementation object of this class
      * @return the class's observer object
      */
     private LogoutTask.Observer getObserver() {
-        return this;
-    }
-
-    private MainPresenter.View getPresenterView() {
         return this;
     }
 

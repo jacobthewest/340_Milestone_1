@@ -42,7 +42,7 @@ public class Story {
         Writer out = new StringWriter();
         for(int i = 0; i < story.size(); i++) {
             try {
-                out.write("Status text = " + story.get(i).getPostText() + "\n");
+                out.write("Status text = " + story.get(i).getTweetText() + "\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,6 +1,5 @@
 package edu.byu.cs.tweeter.view.main.story;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,20 +10,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import edu.byu.cs.tweeter.R;
@@ -34,7 +29,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 import edu.byu.cs.tweeter.presenter.StoryPresenter;
-import edu.byu.cs.tweeter.util.DatePrinter;
+import edu.byu.cs.tweeter.view.util.DatePrinter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetStoryTask;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
@@ -167,16 +162,17 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             String imageUrl = "";
             String videoUrl = "";
 
-            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
-                imageUrl = "\nImage URL: " + status.getImageUrl();
-            }
-
-            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
-                videoUrl = "\nVideo URL: " + status.getVideoUrl();
-            }
+//            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
+//                imageUrl = "\nImage URL: " + status.getImageUrl();
+//            }
+//
+//            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
+//                videoUrl = "\nVideo URL: " + status.getVideoUrl();
+//            }
 
             try {
-                out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
+//                out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
+                out.write(status.getTweetText());
                 boolean mentionsPrinted = false;
                 List<String> mentions = status.getMentions();
                 for(int i = 0; i < mentions.size(); i++) {
@@ -370,7 +366,8 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             String imageUrl = "https://preview.tinyurl.com/yxrxp5d2";
             String videoUrl = "https://youtu.be/oHg5SJYRHA0";
             String postUrl = "Statuses are loading";
-            addItem(new Status(new User("Dummy", "User", ""), postUrl, imageUrl, videoUrl, timePosted, mentions));
+//            addItem(new Status(new User("Dummy", "User", ""), postUrl, imageUrl, videoUrl, timePosted, mentions));
+            addItem(new Status(new User("Dummy", "User", ""), postUrl, null, timePosted, mentions));
         }
 
         /**
