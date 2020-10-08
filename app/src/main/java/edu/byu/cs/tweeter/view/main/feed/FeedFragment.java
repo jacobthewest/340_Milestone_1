@@ -1,6 +1,10 @@
 package edu.byu.cs.tweeter.view.main.feed;
 
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +33,11 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.service.request.FeedRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
 import edu.byu.cs.tweeter.presenter.FeedPresenter;
+import edu.byu.cs.tweeter.view.util.AliasClickableSpan;
 import edu.byu.cs.tweeter.view.util.DatePrinter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFeedTask;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
+import edu.byu.cs.tweeter.view.util.UrlClickableSpan;
 
 /**
  * The fragment that displays on the 'Feed' tab.
@@ -105,10 +111,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
         private final TextView userAlias;
         private final TextView userName;
         private TextView postText;
-        private final TextView imageUrl;
-        private final TextView videoUrl;
         private TextView timePosted;
-        private TextView mentions;
 
 
         /**
@@ -122,18 +125,9 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             userImage = itemView.findViewById(R.id.userImage);
             userAlias = itemView.findViewById(R.id.userAlias);
             userName = itemView.findViewById(R.id.userName);
-            postText = itemView.findViewById(R.id.postText);
-            imageUrl = itemView.findViewById(R.id.imageUrl);
-            videoUrl = itemView.findViewById(R.id.videoUrl);
             timePosted = itemView.findViewById(R.id.timePosted);
-            mentions = itemView.findViewById(R.id.mentions);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            postText = itemView.findViewById(R.id.postText);
         }
 
         /**
@@ -142,7 +136,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * @param status the status.
          */
         void bindStatus(Status status) {
-            String tempPostText = formulatePostText(status);
+            SpannableString tempPostText = formulatePostText(status); // TODO: Update this thing right here.
             String tempTimePosted = formulateTimePosted(status.getTimePosted());
             User statusUser = status.getUser();
 
@@ -150,6 +144,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             userAlias.setText(statusUser.getAlias());
             userName.setText(statusUser.getName());
             postText.setText(tempPostText);
+            postText.setMovementMethod(LinkMovementMethod.getInstance());
             timePosted.setText(tempTimePosted);
         }
 
@@ -158,35 +153,58 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * @param status
          * @return A string with clickable links
          */
-        private String formulatePostText(Status status) {
-            Writer out = new StringWriter();
-            String imageUrl = "";
-            String videoUrl = "";
-
-//            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
-//                imageUrl = "\nImage URL: " + status.getImageUrl();
-//            }
-//
-//            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
-//                videoUrl = "\nVideo URL: " + status.getVideoUrl();
-//            }
-
-            try {
-                //out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
-                out.write(status.getTweetText() + imageUrl + videoUrl);
-                boolean mentionsPrinted = false;
-                List<String> mentions = status.getMentions();
-                for(int i = 0; i < mentions.size(); i++) {
-                    if(!mentionsPrinted && (!mentions.get(i).equals("") && !mentions.get(i).equals(null))) {
-                        out.write("\nMentions: ");
-                        mentionsPrinted = true;
-                    }
-                    out.write(status.getMentions().get(i) + " ");
+        private SpannableString formulatePostText(Status status) {
+            String tweetText = status.getTweetText();
+            Spannable spannable = new SpannableString(status.getTweetText());
+            if(status.getUrls() != null) {
+                for(String url : status.getUrls()) {
+                    int startIndex = tweetText.indexOf(url);
+                    int endIndex = startIndex + url.length();
+                    spannable.setSpan(new UrlClickableSpan(url, getActivity()), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
-            } catch(Exception e) {
-                return "Error in FeedFragment.FormulatePostText()";
             }
-            return out.toString();
+
+            if(status.getMentions() != null) {
+                for(String mention : status.getMentions()) {
+                    int startIndex = tweetText.indexOf(mention);
+                    int endIndex = startIndex + mention.length();
+                    String extraction = tweetText.substring(startIndex, endIndex);
+                    SpannableString string = new SpannableString("Text with clickable text");
+                    string.setSpan(new AliasClickableSpan(this, mention, I_NEED_A_PASSWORD_NOT_AN_AUTH_TOKEN ), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+
+            return (SpannableString) spannable;
+
+//
+//            Writer out = new StringWriter();
+//            String imageUrl = "";
+//            String videoUrl = "";
+//
+////            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
+////                imageUrl = "\nImage URL: " + status.getImageUrl();
+////            }
+////
+////            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
+////                videoUrl = "\nVideo URL: " + status.getVideoUrl();
+////            }
+//
+//            try {
+//                //out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
+//                out.write(status.getTweetText() + imageUrl + videoUrl);
+//                boolean mentionsPrinted = false;
+//                List<String> mentions = status.getMentions();
+//                for(int i = 0; i < mentions.size(); i++) {
+//                    if(!mentionsPrinted && (!mentions.get(i).equals("") && !mentions.get(i).equals(null))) {
+//                        out.write("\nMentions: ");
+//                        mentionsPrinted = true;
+//                    }
+//                    out.write(status.getMentions().get(i) + " ");
+//                }
+//            } catch(Exception e) {
+//                return "Error in FeedFragment.FormulatePostText()";
+//            }
+//            return out.toString();
         }
 
         /**

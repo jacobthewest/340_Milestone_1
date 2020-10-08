@@ -1,5 +1,8 @@
 package edu.byu.cs.tweeter.model.net;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -19,6 +22,7 @@ import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
 import edu.byu.cs.tweeter.model.service.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
+import edu.byu.cs.tweeter.model.service.request.RetrieveUserRequest;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.request.SubmitTweetRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
@@ -27,6 +31,7 @@ import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.service.response.LoginResponse;
 import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
 import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
+import edu.byu.cs.tweeter.model.service.response.RetrieveUserResponse;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 import edu.byu.cs.tweeter.model.service.response.SubmitTweetResponse;
 
@@ -62,6 +67,19 @@ public class ServerFacade {
     public LoginResponse login(LoginRequest request) {
         //"https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
         User user = new User("Test", "User", "https://i.imgur.com/VZQQiQ1.jpg");
+        return new LoginResponse(user, new AuthToken(user.getAlias()));
+    }
+
+    /**
+     * Attempts to retrieve a user and if successful, returns the retrieved user and an auth token. The current
+     * implementation is hard-coded to return a dummy user and doesn't actually make a network
+     * request.
+     *
+     * @param request contains all information needed to perform a login.
+     * @return the login response.
+     */
+    public RetrieveUserResponse retrieveUser(RetrieveUserRequest request) {
+
         return new LoginResponse(user, new AuthToken(user.getAlias()));
     }
 
@@ -397,34 +415,413 @@ public class ServerFacade {
      */
     private Map<User, List<Status>> getFeedStatusList(User user) {
         Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
-        List<Status> statusList = new ArrayList<>();
 
         // Here to make a newly registered user have no followers/followees
         if(!user.getFirstName().equals("Test") || !user.getLastName().equals("User")) {
+            List<Status> statusList = new ArrayList<>();
             returnMe.put(new User("new", "regristration", ""), statusList);
             return returnMe;
         }
 
-        List<Date> timesPosted = get21DatesShuffled();
-        List<String> postTexts = get21PostTexts();
-        List<String> mentions = get21Mentions();
-        List<User> users = get21Users();
+        returnMe.put(user, get21Statuses(null));
+        return returnMe; // Won't ever get past this.
 
-        for(int i = 0; i < 21; i++) {
-            String postText = postTexts.get(i);
-            String mention = mentions.get(i);
-            List<String> mentionForStatus = new ArrayList<>();
-            mentionForStatus.add(mention);
-            Date d = timesPosted.get(i);
-            Calendar tempTime = Calendar.getInstance();
-            tempTime.setTime(d);
-            User tempUser = users.get(i);
-            Status s = new Status(tempUser, postText, null, tempTime, mentionForStatus);
-            statusList.add(s);
+//        List<Date> timesPosted = get21DatesSorted();
+//        List<String> postTexts = get21PostTexts();
+//        List<String> mentions = get21Mentions();
+//        List<User> users = get21Users();
+//
+//        for(int i = 0; i < 21; i++) {
+//            String postText = postTexts.get(i);
+//            String mention = mentions.get(i);
+//            List<String> mentionForStatus = new ArrayList<>();
+//            mentionForStatus.add(mention);
+//            Date d = timesPosted.get(i);
+//            Calendar tempTime = Calendar.getInstance();
+//            tempTime.setTime(d);
+//            User tempUser = users.get(i);
+//            Status s = new Status(tempUser, postText, null, tempTime, mentionForStatus);
+//            statusList.add(s);
+//        }
+//
+//        returnMe.put(user, statusList);
+//        return returnMe;
+    }
+
+
+    private List<Status> get21Statuses(User definedUser) {
+        List<Status> feed = new ArrayList<>();
+        String imageURL = "https://i.imgur.com/VZQQiQ1.jpg";
+
+        if(definedUser == null) {
+            // --------------------- 1--------------------- //
+            User user = new User("Bill", "Adams", imageURL);
+            List<String> uOne = new ArrayList<>();
+            uOne.add("multiply.com");
+            List<String> mOne = new ArrayList<>();
+            mOne.add("@JacobWest");
+            mOne.add("@RickyMartin");
+            Date d = createDate(2020, 0, 11, 0, 13);
+            Calendar a = Calendar.getInstance();
+            a.setTime(d);
+            Status s = new Status(user, "This is a text @JacobWest @RickyMartin multiply.com", uOne, a, mOne);
+            feed.add(s); // # 1
+
+            // --------------------- 2 --------------------- //
+            user = new User("Colin", "Cowherd", imageURL);
+            List<String> uTwo = new ArrayList<>();
+            uTwo.add("tinyurl.com");
+            d = createDate(2020, 0, 11, 0, 14);
+            Calendar b = Calendar.getInstance();
+            b.setTime(d);
+            s = new Status(user, "You should visit tinyurl.com", uTwo, b, null);
+            feed.add(s);
+
+            // --------------------- 3 --------------------- //
+            user = new User("James", "Shulte", imageURL);
+            List<String> mThree = new ArrayList<>();
+            mThree.add("@JacobWest");
+            d = createDate(2019, 3, 16, 3, 34);
+            Calendar c = Calendar.getInstance();
+            c.setTime(d);
+            s = new Status(user, "Dolphins @JacobWest have Tua", null, c, mThree);
+            feed.add(s);
+
+            // --------------------- 4 --------------------- //
+            user = new User("Joe", "Flacco", imageURL);
+            d = createDate(2014, 7, 30, 17, 01);
+            Calendar de = Calendar.getInstance();
+            de.setTime(d);
+            s = new Status(user, "Jacksonville will draft third", null, de, null);
+            feed.add(s);
+
+            // --------------------- 5 --------------------- //
+            user = new User("Lebron", "James", imageURL);
+            List<String> uFive = new ArrayList<>();
+            uFive.add("dell.com");
+            d = createDate(2012, 3, 3, 18, 21);
+            Calendar e = Calendar.getInstance();
+            e.setTime(d);
+            s = new Status(user, "I endorse dell.com", uFive, e, null);
+            feed.add(s);
+
+            // --------------------- 6 --------------------- //
+            user = new User("Aaron", "Rodgers", imageURL);
+            List<String> mSix = new ArrayList<>();
+            mSix.add("@RobertGardner");
+            mSix.add("@Snowden");
+            mSix.add("@TristanThompson");
+            d = createDate(2002, 10, 19, 14, 59);
+            Calendar f = Calendar.getInstance();
+            f.setTime(d);
+            s = new Status(user, "@RobertGardner @Snowden @TristanThompson", null, f, mSix);
+            feed.add(s);
+
+            // --------------------- 7 --------------------- //
+            user = new User("Kyle", "West", imageURL);
+            d = createDate(2000, 10, 19, 14, 59);
+            Calendar g = Calendar.getInstance();
+            g.setTime(d);
+            s = new Status(user, ";)", null, g, null);
+            feed.add(s);
+
+            // --------------------- 8 --------------------- //
+            user = new User("Random", "Dude", imageURL);
+            d = createDate(2003, 5, 30, 16, 11);
+            Calendar h = Calendar.getInstance();
+            h.setTime(d);
+            s = new Status(user, "One, two, pick and roll", null, h, null);
+            feed.add(s);
+
+            // --------------------- 9 --------------------- //
+            user = new User("Another", "Dude", imageURL);
+            d = createDate(2001, 9, 4, 18, 29);
+            Calendar i = Calendar.getInstance();
+            i.setTime(d);
+            s = new Status(user, "A lot of old guys past their prime.", null, i, null);
+            feed.add(s);
+
+            // --------------------- 10 --------------------- //
+            user = new User("Tristan", "Thompson", imageURL);
+            d = createDate(2019, 8, 12, 19, 1);
+            Calendar j = Calendar.getInstance();
+            j.setTime(d);
+            s = new Status(user, "I remember being a role player.", null, j, null);
+            feed.add(s);
+
+            // --------------------- 11 --------------------- //
+            user = new User("Tristan", "Thompson", imageURL);
+            List<String> uEleven = new ArrayList<>();
+            List<String> mEleven = new ArrayList<>();
+            uEleven.add("salon.com");
+            mEleven.add("@KCP");
+            d = createDate(2007, 4, 15, 4, 43);
+            Calendar k = Calendar.getInstance();
+            k.setTime(d);
+            s = new Status(user, "Why did we sign him? @KCP. salon.com", uEleven, k, mEleven);
+            feed.add(s);
+
+            // --------------------- 12 --------------------- //
+            user = new User("Donnovan", "Mitchell", imageURL);
+            List<String> mTwelve = new ArrayList<>();
+            mTwelve.add("@theMedia");
+            mTwelve.add("@Rudy");
+            d = createDate(2016, 8, 9, 8, 5);
+            Calendar l = Calendar.getInstance();
+            l.setTime(d);
+            s = new Status(user, "Rudy and I are chill @theMedia @Rudy", null, l, mTwelve);
+            feed.add(s);
+
+            // --------------------- 13 --------------------- //
+            user = new User("Mr.", "Tinkerer", imageURL);
+            d = createDate(2013, 3, 13, 9, 56);
+            Calendar m = Calendar.getInstance();
+            m.setTime(d);
+            s = new Status(user, "I am the tinker man!", null, m, null);
+            feed.add(s);
+
+            // --------------------- 14 --------------------- //
+            user = new User("Cam", "Newton", imageURL);
+            List<String> uFourteen = new ArrayList<>();
+            List<String> mFourteen = new ArrayList<>();
+            uFourteen.add("https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg");
+            mFourteen.add("@BillBelichick");
+            d = createDate(2013, 3, 13, 9, 55);
+            Calendar n = Calendar.getInstance();
+            n.setTime(d);
+            s = new Status(user, "We are the new power couple @BillBelichick https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg", uFourteen, n, mFourteen);
+            feed.add(s);
+
+            // --------------------- 15 --------------------- //
+            user = new User("Jason", "Kidd", imageURL);
+            d = createDate(2012, 3, 13, 9, 55);
+            Calendar o = Calendar.getInstance();
+            o.setTime(d);
+            s = new Status(user, "That takes a lot of ownership!", null, o, null);
+            feed.add(s);
+
+            // --------------------- 16 --------------------- //
+            user = new User("Nikola", "Yokic", imageURL);
+            d = createDate(2012, 3, 12, 9, 55);
+            Calendar p = Calendar.getInstance();
+            p.setTime(d);
+            s = new Status(user, "We beat the clippers!", null, p, null);
+            feed.add(s);
+
+            // --------------------- 17 --------------------- //
+            user = new User("Taysom", "Hill", imageURL);
+            d = createDate(2012, 3, 12, 9, 45);
+            Calendar q = Calendar.getInstance();
+            q.setTime(d);
+            s = new Status(user, "I lift bro!", null, q, null);
+            feed.add(s);
+
+            // --------------------- 18 --------------------- //
+            user = new User("Jenny", "Briggs", imageURL);
+            d = createDate(2010, 8, 17, 9, 55);
+            Calendar r = Calendar.getInstance();
+            r.setTime(d);
+            s = new Status(user, "The truth is an acquired taste.", null, r, null);
+            feed.add(s);
+
+            // --------------------- 19 --------------------- //
+            user = new User("Bad", "Bunny", imageURL);
+            d = createDate(2020, 8, 17, 9, 55);
+            Calendar sa = Calendar.getInstance();
+            sa.setTime(d);
+            s = new Status(user, "Encuentra la buena vida baby! #CoronaLite", null, sa, null);
+            feed.add(s);
+
+            // --------------------- 20 --------------------- //
+            user = new User("Bad", "Bunny", imageURL);
+            d = createDate(2020, 0, 27, 23, 55);
+            Calendar t = Calendar.getInstance();
+            t.setTime(d);
+            s = new Status(user, "Me calle bien el Snoop Dogg", null, t, null);
+            feed.add(s);
+
+            // --------------------- 21 --------------------- //
+            user = new User("Bad", "Bunny", imageURL);
+            d = createDate(2020, 3, 7, 9, 4);
+            Calendar u = Calendar.getInstance();
+            u.setTime(d);
+            s = new Status(user, "Hago buena musica", null, u, null);
+            feed.add(s);
+        } else {
+            // --------------------- 1--------------------- //
+            List<String> uOne = new ArrayList<>();
+            uOne.add("multiply.com");
+            List<String> mOne = new ArrayList<>();
+            mOne.add("@JacobWest");
+            mOne.add("@RickyMartin");
+            Date d = createDate(2020, 0, 11, 0, 13);
+            Calendar a = Calendar.getInstance();
+            a.setTime(d);
+            Status s = new Status(definedUser, "This is a text @JacobWest @RickyMartin multiply.com", uOne, a, mOne);
+            feed.add(s); // # 1
+
+            // --------------------- 2 --------------------- //
+            List<String> uTwo = new ArrayList<>();
+            uTwo.add("tinyurl.com");
+            d = createDate(2020, 0, 11, 0, 14);
+            Calendar b = Calendar.getInstance();
+            b.setTime(d);
+            s = new Status(definedUser, "You should visit tinyurl.com", uTwo, b, null);
+            feed.add(s);
+
+            // --------------------- 3 --------------------- //
+            List<String> mThree = new ArrayList<>();
+            mThree.add("@JacobWest");
+            d = createDate(2019, 3, 16, 3, 34);
+            Calendar c = Calendar.getInstance();
+            c.setTime(d);
+            s = new Status(definedUser, "Dolphins @JacobWest have Tua", null, c, mThree);
+            feed.add(s);
+
+            // --------------------- 4 --------------------- //
+            d = createDate(2014, 7, 30, 17, 01);
+            Calendar de = Calendar.getInstance();
+            de.setTime(d);
+            s = new Status(definedUser, "Jacksonville will draft third", null, de, null);
+            feed.add(s);
+
+            // --------------------- 5 --------------------- //
+            List<String> uFive = new ArrayList<>();
+            uFive.add("dell.com");
+            d = createDate(2012, 3, 3, 18, 21);
+            Calendar e = Calendar.getInstance();
+            e.setTime(d);
+            s = new Status(definedUser, "I endorse dell.com", uFive, e, null);
+            feed.add(s);
+
+            // --------------------- 6 --------------------- //
+            List<String> mSix = new ArrayList<>();
+            mSix.add("@RobertGardner");
+            mSix.add("@Snowden");
+            mSix.add("@TristanThompson");
+            d = createDate(2002, 10, 19, 14, 59);
+            Calendar f = Calendar.getInstance();
+            f.setTime(d);
+            s = new Status(definedUser, "@RobertGardner @Snowden @TristanThompson", null, f, mSix);
+            feed.add(s);
+
+            // --------------------- 7 --------------------- //
+            d = createDate(2000, 10, 19, 14, 59);
+            Calendar g = Calendar.getInstance();
+            g.setTime(d);
+            s = new Status(definedUser, ";)", null, g, null);
+            feed.add(s);
+
+            // --------------------- 8 --------------------- //
+            d = createDate(2003, 5, 30, 16, 11);
+            Calendar h = Calendar.getInstance();
+            h.setTime(d);
+            s = new Status(definedUser, "One, two, pick and roll", null, h, null);
+            feed.add(s);
+
+            // --------------------- 9 --------------------- //
+            d = createDate(2001, 9, 4, 18, 29);
+            Calendar i = Calendar.getInstance();
+            i.setTime(d);
+            s = new Status(definedUser, "A lot of old guys past their prime.", null, i, null);
+            feed.add(s);
+
+            // --------------------- 10 --------------------- //
+            d = createDate(2019, 8, 12, 19, 1);
+            Calendar j = Calendar.getInstance();
+            j.setTime(d);
+            s = new Status(definedUser, "I remember being a role player.", null, j, null);
+            feed.add(s);
+
+            // --------------------- 11 --------------------- //
+            List<String> uEleven = new ArrayList<>();
+            List<String> mEleven = new ArrayList<>();
+            uEleven.add("salon.com");
+            mEleven.add("@KCP");
+            d = createDate(2007, 4, 15, 4, 43);
+            Calendar k = Calendar.getInstance();
+            k.setTime(d);
+            s = new Status(definedUser, "Why did we sign him? @KCP. salon.com", uEleven, k, mEleven);
+            feed.add(s);
+
+            // --------------------- 12 --------------------- //
+            List<String> mTwelve = new ArrayList<>();
+            mTwelve.add("@theMedia");
+            mTwelve.add("@Rudy");
+            d = createDate(2016, 8, 9, 8, 5);
+            Calendar l = Calendar.getInstance();
+            l.setTime(d);
+            s = new Status(definedUser, "Rudy and I are chill @theMedia @Rudy", null, l, mTwelve);
+            feed.add(s);
+
+            // --------------------- 13 --------------------- //
+            d = createDate(2013, 3, 13, 9, 56);
+            Calendar m = Calendar.getInstance();
+            m.setTime(d);
+            s = new Status(definedUser, "I am the tinker man!", null, m, null);
+            feed.add(s);
+
+            // --------------------- 14 --------------------- //
+            List<String> uFourteen = new ArrayList<>();
+            List<String> mFourteen = new ArrayList<>();
+            uFourteen.add("https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg");
+            mFourteen.add("@BillBelichick");
+            d = createDate(2013, 3, 13, 9, 55);
+            Calendar n = Calendar.getInstance();
+            n.setTime(d);
+            s = new Status(definedUser, "We are the new power couple @BillBelichick https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg", uFourteen, n, mFourteen);
+            feed.add(s);
+
+            // --------------------- 15 --------------------- //
+            d = createDate(2012, 3, 13, 9, 55);
+            Calendar o = Calendar.getInstance();
+            o.setTime(d);
+            s = new Status(definedUser, "That takes a lot of ownership!", null, o, null);
+            feed.add(s);
+
+            // --------------------- 16 --------------------- //
+            d = createDate(2012, 3, 12, 9, 55);
+            Calendar p = Calendar.getInstance();
+            p.setTime(d);
+            s = new Status(definedUser, "We beat the clippers!", null, p, null);
+            feed.add(s);
+
+            // --------------------- 17 --------------------- //
+            d = createDate(2012, 3, 12, 9, 45);
+            Calendar q = Calendar.getInstance();
+            q.setTime(d);
+            s = new Status(definedUser, "I lift bro!", null, q, null);
+            feed.add(s);
+
+            // --------------------- 18 --------------------- //
+            d = createDate(2010, 8, 17, 9, 55);
+            Calendar r = Calendar.getInstance();
+            r.setTime(d);
+            s = new Status(definedUser, "The truth is an acquired taste.", null, r, null);
+            feed.add(s);
+
+            // --------------------- 19 --------------------- //
+            d = createDate(2020, 8, 17, 9, 55);
+            Calendar sa = Calendar.getInstance();
+            sa.setTime(d);
+            s = new Status(definedUser, "Encuentra la buena vida baby! #CoronaLite", null, sa, null);
+            feed.add(s);
+
+            // --------------------- 20 --------------------- //
+            d = createDate(2020, 0, 27, 23, 55);
+            Calendar t = Calendar.getInstance();
+            t.setTime(d);
+            s = new Status(definedUser, "Me calle bien el Snoop Dogg", null, t, null);
+            feed.add(s);
+
+            // --------------------- 21 --------------------- //
+            d = createDate(2020, 3, 7, 9, 4);
+            Calendar u = Calendar.getInstance();
+            u.setTime(d);
+            s = new Status(definedUser, "Hago buena musica", null, u, null);
+            feed.add(s);
         }
-
-        returnMe.put(user, statusList);
-        return returnMe;
+        return feed;
     }
 
     /**
@@ -440,158 +837,18 @@ public class ServerFacade {
             return returnMe;
         }
 
-        List<Date> timesPosted = get21DatesShuffled();
-        List<String> postTexts = get21PostTexts();
-        List<String> mentions = get21Mentions();
-
-        final String MALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
-        for(int i = 0; i < 21; i++) {
-            String postText = postTexts.get(i);
-            String mention = mentions.get(i);
-            List<String> mentionForStatus = new ArrayList<>();
-            mentionForStatus.add(mention);
-            Date d = timesPosted.get(i);
-            Calendar tempTime = Calendar.getInstance();
-            tempTime.setTime(d);
-            Status s = new Status(user, postText, null, tempTime, mentionForStatus);
-            statusList.add(s);
-        }
+        statusList = get21Statuses(user);
 
         returnMe.put(user, statusList);
         return returnMe;
     }
 
-    /**
-     * Gets mentions for creating statuses
-     * @return a list of 21 mentions
-     */
-    private List<String> get21Mentions() {
-        List<String> mentions = new ArrayList<>();
-        mentions.add("@TomHanks");
-        mentions.add("");
-        mentions.add("");
-        mentions.add("@RusselWilson");
-        mentions.add("@LamarJackson");
-        mentions.add("");
-        mentions.add("@JerryJudy");
-        mentions.add("");
-        mentions.add("@DonaldTrump");
-        mentions.add("@ElonMusk");
-        mentions.add("@OprahWinfrey");
-        mentions.add("");
-        mentions.add("");
-        mentions.add("@Wendy's");
-        mentions.add("");
-        mentions.add("");
-        mentions.add("@JennyBriggsWest");
-        mentions.add("");
-        mentions.add("@YourMom");
-        mentions.add("");
-        mentions.add("@CountryTimeLemonade");
-        return mentions;
-    }
 
     private Date createDate(int year, int month, int day, int hour, int minute) {
         Date d = new Date(year - 1900, month, day);
         d.setHours(hour);
         d.setMinutes(minute);
         return d;
-    }
-
-    /**
-     * Gets date objects for creating statuses
-     * @return
-     */
-    private List<Date> get21DatesShuffled() {
-        List<Date> returnMe = new ArrayList<>();
-
-        returnMe.add(createDate(2020, 0, 11, 0, 13));
-        returnMe.add(createDate(1996, 1, 1, 1, 4));
-        returnMe.add(createDate(2012, 2, 21, 2, 13));
-        returnMe.add(createDate(2013, 3, 13, 3, 56));
-        returnMe.add(createDate(2007, 4, 15, 4, 43));
-        returnMe.add(createDate(2000, 5, 28, 5, 13));
-        returnMe.add(createDate(2018, 6, 30, 6, 12));
-        returnMe.add(createDate(2017, 7, 12, 7, 21));
-        returnMe.add(createDate(2016, 8, 9, 8, 5));
-        returnMe.add(createDate(2015, 9, 2, 9, 59));
-        returnMe.add(createDate(2014, 10, 3, 10, 33));
-        returnMe.add(createDate(2013, 11, 5, 11, 30));
-        returnMe.add(createDate(2009, 2, 16, 12, 17));
-        returnMe.add(createDate(2010, 3, 24, 13, 9));
-        returnMe.add(createDate(2015, 4, 29, 14, 3));
-        returnMe.add(createDate(2014, 1, 28, 15, 31));
-        returnMe.add(createDate(2003, 5, 30, 16, 11));
-        returnMe.add(createDate(2002, 6, 8, 17, 36));
-        returnMe.add(createDate(2001, 9, 4, 18, 29));
-        returnMe.add(createDate(2019, 8, 12, 19, 1));
-        returnMe.add(createDate(2005, 1, 4, 21, 2));
-
-        Collections.sort(returnMe, Collections.reverseOrder());
-        return returnMe;
-    }
-
-    /**
-     * Gets user objects for creating statuses for the feed view
-     * @return random users
-     */
-    private List<User> get21Users() {
-        List<User> returnMe = new ArrayList<>();
-        String MIKE = "https://i.imgur.com/VZQQiQ1.jpg";
-        returnMe.add(new User("Rick", "James", MIKE));
-        returnMe.add(new User("Mother", "Teresa", MIKE));
-        returnMe.add(new User("Jenny", "Briggs", MIKE));
-        returnMe.add(new User("Lebron", "James", MIKE));
-        returnMe.add(new User("Tom", "Hanks", MIKE));
-        returnMe.add(new User("Asian", "Lady", MIKE));
-        returnMe.add(new User("Pretty", "Boy", MIKE));
-        returnMe.add(new User("Chicken", "Licken", MIKE));
-        returnMe.add(new User("Bucktooth", "Baby", MIKE));
-        returnMe.add(new User("Skooby", "Doo", MIKE));
-        returnMe.add(new User("Kevin", "West", MIKE));
-        returnMe.add(new User("Rachel", "West", MIKE));
-        returnMe.add(new User("Albert", "Eistein", MIKE));
-        returnMe.add(new User("Brett", "West", MIKE));
-        returnMe.add(new User("Bien", "Choro", MIKE));
-        returnMe.add(new User("Donald", "Trump", MIKE));
-        returnMe.add(new User("Sam", "Wright", MIKE));
-        returnMe.add(new User("Sponge", "Bob", MIKE));
-        returnMe.add(new User("Nacho", "Libre", MIKE));
-        returnMe.add(new User("Homer", "Simpson", MIKE));
-        returnMe.add(new User("Lord", "Farquaad", MIKE));
-
-        Collections.shuffle(returnMe);
-        return returnMe;
-    }
-
-    /**
-     * Gets post texts for creating users
-     * @return a list of texts for tweets
-     */
-    private List<String> get21PostTexts() {
-        List<String> returnMe = new ArrayList<>();
-        returnMe.add("This is my first tweet");
-        returnMe.add("How is the weather up there");
-        returnMe.add("Bears, beats, Battle Star Galactica");
-        returnMe.add("The STEM fair was crazy today! Seriously, it was all virtual, but it was still crazy.");
-        returnMe.add("Helaman 5:12");
-        returnMe.add("Telestrations is a fun game. Give it a play!");
-        returnMe.add("I like collecting house plants, succulents, and cacti");
-        returnMe.add("I bought glassware at D.I.");
-        returnMe.add("Chacos aren't basic white girl shoes, they are actually functional people!");
-        returnMe.add("Mini Wheats are on top of my fridge...");
-        returnMe.add("Trash Pandas are funny.");
-        returnMe.add("Pr0p3r Punctuat10n");
-        returnMe.add("My wife is bored and wants to hang out.");
-        returnMe.add("MyPillow is such a heavenly pillow!");
-        returnMe.add("I have a porcelain chicken");
-        returnMe.add("My hands hurt from typing");
-        returnMe.add("I got a new phone case.....................................");
-        returnMe.add("Silicone rings are more comfortable than metal rings");
-        returnMe.add("My sisters and mom don't have Covid!");
-        returnMe.add("I'm going to the gym tomorrow");
-        returnMe.add("I need to water my plants now.");
-        return returnMe;
     }
 
     /**

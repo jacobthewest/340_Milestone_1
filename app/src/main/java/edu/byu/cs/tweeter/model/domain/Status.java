@@ -77,15 +77,26 @@ public class Status implements Comparable<Status>, Serializable {
 
     @Override
     public String toString() {
-        return "Status{" +
+        String returnMe = "Status{" +
                 "firstName='" + user.getFirstName() + '\'' +
                 ", lastName='" + user.getLastName() + '\'' +
                 ", alias='" + user.getAlias() + '\'' +
                 ", postText='" + tweetText + '\'' +
-                ", urls='" + urls.toString() + '\'' +
-                ", timePosted='" + timePosted.toString() + '\'' +
-                ", mentions='" + mentions.toString() + '\'' +
-                '}';
+                ", urls='";
+        if(urls != null) {
+            returnMe += urls.toString() + '\'';
+        } else {
+            returnMe += "null";
+        }
+        returnMe += ", timePosted='" + timePosted.toString() + '\''+
+                ", mentions='";
+        if(mentions != null) {
+            returnMe += mentions.toString() + '\'';
+        } else {
+            returnMe += "null";
+        }
+        returnMe += '}';
+        return returnMe;
     }
 
     @Override

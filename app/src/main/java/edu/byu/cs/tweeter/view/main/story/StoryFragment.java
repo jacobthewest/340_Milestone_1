@@ -105,8 +105,6 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         private final TextView userAlias;
         private final TextView userName;
         private TextView postText;
-        private final TextView imageUrl;
-        private final TextView videoUrl;
         private TextView timePosted;
         private TextView mentions;
 
@@ -123,10 +121,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             userAlias = itemView.findViewById(R.id.userAlias);
             userName = itemView.findViewById(R.id.userName);
             postText = itemView.findViewById(R.id.postText);
-            imageUrl = itemView.findViewById(R.id.imageUrl);
-            videoUrl = itemView.findViewById(R.id.videoUrl);
             timePosted = itemView.findViewById(R.id.timePosted);
-            mentions = itemView.findViewById(R.id.mentions);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
