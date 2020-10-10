@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
-import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -46,7 +43,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
 
     private static final String LOG_TAG = "FollowingFragment";
     private static final String USER_KEY = "UserKey";
-    private static final String FOLLOW_KEY = "FollowKey";
+    private static final String FOLLOW_KEY = "followKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
     private static final int LOADING_DATA_VIEW = 0;
@@ -66,7 +63,6 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
      * bundle assigned to the fragment.
      *
      * @param user the logged in user.
-     * @param followUser the user in the view.
      * @param authToken the auth token for this user's session.
      * @return the fragment.
      */
@@ -101,9 +97,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
 
         feedRecyclerViewAdapter = new FeedFragment.FeedRecyclerViewAdapter();
         feedRecyclerView.setAdapter(feedRecyclerViewAdapter);
-
         feedRecyclerView.addOnScrollListener(new FeedFragment.FeedRecyclerViewPaginationScrollListener(layoutManager));
-
         return view;
     }
 
@@ -136,7 +130,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new AliasClickableSpan(getActivity(), userAlias.getText().toString(), authToken).onClick(view);
+                    new AliasClickableSpan(getActivity(), user, userAlias.getText().toString(), authToken).onClick(view);
                 }
             });
         }
@@ -180,7 +174,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
                 for(String mention : status.getMentions()) {
                     int startIndex = tweetText.indexOf(mention);
                     int endIndex = startIndex + mention.length();
-                    spannable.setSpan(new AliasClickableSpan(getActivity(), mention, authToken ), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannable.setSpan(new AliasClickableSpan(getActivity(), user, mention, authToken ), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
 
@@ -321,7 +315,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             addLoadingFooter();
 
             GetFeedTask getFeedTask = new GetFeedTask(presenter, this);
-            FeedRequest request = new FeedRequest(followUser, PAGE_SIZE, lastStatus);
+            FeedRequest request = new FeedRequest(user, PAGE_SIZE, lastStatus);
             getFeedTask.execute(request);
         }
 

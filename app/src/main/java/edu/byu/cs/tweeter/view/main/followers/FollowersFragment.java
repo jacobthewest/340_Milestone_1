@@ -105,9 +105,9 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
      */
     private class FollowersHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView userImage;
-        private final TextView userAlias;
-        private final TextView userName;
+        private final ImageView followerImage;
+        private final TextView followerAlias;
+        private final TextView follower_username;
 
         /**
          * Creates an instance and sets an OnClickListener for the user's row.
@@ -117,14 +117,14 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
         FollowersHolder(@NonNull View itemView) {
             super(itemView);
 
-            userImage = itemView.findViewById(R.id.userImage);
-            userAlias = itemView.findViewById(R.id.userAlias);
-            userName = itemView.findViewById(R.id.userName);
+            followerImage = itemView.findViewById(R.id.userImage);
+            followerAlias = itemView.findViewById(R.id.userAlias);
+            follower_username = itemView.findViewById(R.id.userName);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new AliasClickableSpan(getActivity(), userAlias.getText().toString(), authToken).onClick(view);
+                    new AliasClickableSpan(getActivity(), user, follower_username.getText().toString(), authToken).onClick(view);
                 }
             });
         }
@@ -135,9 +135,9 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
          * @param user the user.
          */
         void bindUser(User user) {
-            userImage.setImageDrawable(ImageUtils.drawableFromByteArray(user.getImageBytes()));
-            userAlias.setText(user.getAlias());
-            userName.setText(user.getName());
+            followerImage.setImageDrawable(ImageUtils.drawableFromByteArray(user.getImageBytes()));
+            followerAlias.setText(user.getAlias());
+            follower_username.setText(user.getName());
         }
     }
 

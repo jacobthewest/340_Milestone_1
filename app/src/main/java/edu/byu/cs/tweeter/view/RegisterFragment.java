@@ -17,9 +17,6 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.textfield.TextInputEditText;
-
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import edu.byu.cs.tweeter.R;

@@ -10,7 +10,7 @@ public class FollowingRequest {
 
     private final User user;
     private final int limit;
-    private final User lastFollowee;
+    private User lastFollowee;
 
     /**
      * Creates an instance.
@@ -25,6 +25,11 @@ public class FollowingRequest {
         this.user = user;
         this.limit = limit;
         this.lastFollowee = lastFollowee;
+    }
+
+    public FollowingRequest(User user, int limit) {
+        this.user = user;
+        this.limit = limit;
     }
 
     /**

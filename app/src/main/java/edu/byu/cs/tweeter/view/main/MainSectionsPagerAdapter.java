@@ -22,17 +22,14 @@ import edu.byu.cs.tweeter.view.main.following.FollowingFragment;
  */
 class MainSectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int FEED_FRAGMENT_POSITION = 0;
-    private static final int STORY_FRAGMENT_POSITION = 1;
-    private static final int FOLLOWING_FRAGMENT_POSITION = 2;
-    private static final int FOLLOWERS_FRAGMENT_POSITION = 3;
-
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.feedTabTitle, R.string.storyTabTitle, R.string.followingTabTitle, R.string.followersTabTitle};
+    private static final int[] FOUR_TAB_TITLES = new int[]{R.string.feedTabTitle, R.string.storyTabTitle, R.string.followingTabTitle, R.string.followersTabTitle};
+    private static final int[] THREE_TAB_TITLES = new int[]{R.string.storyTabTitle, R.string.followingTabTitle, R.string.followersTabTitle};
     private final Context mContext;
     private final User user;
     private final User followUser;
     private final AuthToken authToken;
+    private boolean displayFourTabs;
 
     public MainSectionsPagerAdapter(Context context, FragmentManager fm, User user, User followUser, AuthToken authToken) {
         super(fm);
@@ -40,32 +37,55 @@ class MainSectionsPagerAdapter extends FragmentPagerAdapter {
         this.user = user;
         this.followUser = followUser;
         this.authToken = authToken;
+
+        if(user.equals(followUser)) {
+            displayFourTabs = true;
+        } else {displayFourTabs = false;}
     }
 
     @Override
     public Fragment getItem(int position) {
-        if (position == FEED_FRAGMENT_POSITION) {
-            return FeedFragment.newInstance(user, followUser, authToken);
-        } else if (position == STORY_FRAGMENT_POSITION) {
-            return StoryFragment.newInstance(user, followUser, authToken);
-        } else if (position == FOLLOWING_FRAGMENT_POSITION) {
-            return FollowingFragment.newInstance(user, followUser, authToken);
-        } else if (position == FOLLOWERS_FRAGMENT_POSITION) {
-            return FollowersFragment.newInstance(user, followUser, authToken);
+        if (displayFourTabs) {
+            if (position == 0) {
+                return FeedFragment.newInstance(user, followUser, authToken);
+            } else if (position == 1) {
+                return StoryFragment.newInstance(user, followUser, authToken);
+            } else if (position == 2) {
+                return FollowingFragment.newInstance(user, followUser, authToken);
+            } else if (position == 3) {
+                return FollowersFragment.newInstance(user, followUser, authToken);
+            } else {
+                return MainPlaceholderFragment.newInstance(position + 1);
+            }
         } else {
-            return MainPlaceholderFragment.newInstance(position + 1);
+            if (position == 0) {
+                return StoryFragment.newInstance(user, followUser, authToken);
+            } else if (position == 1) {
+                return FollowingFragment.newInstance(user, followUser, authToken);
+            } else if (position == 2) {
+                return FollowersFragment.newInstance(user, followUser, authToken);
+            } else {
+                return MainPlaceholderFragment.newInstance(position + 1);
+            }
         }
+
     }
 
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return mContext.getResources().getString(TAB_TITLES[position]);
+        if(this.displayFourTabs) {
+            return mContext.getResources().getString(FOUR_TAB_TITLES[position]);
+        }
+        return mContext.getResources().getString(THREE_TAB_TITLES[position]);
+
     }
 
     @Override
     public int getCount() {
-        // Show 4 total pages.
-        return 4;
+        if(this.displayFourTabs) {
+            return 4; // Show 4 total pages
+        }
+        return 3; // Show 3 total pages
     }
 }

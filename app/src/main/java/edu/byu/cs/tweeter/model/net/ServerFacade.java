@@ -200,6 +200,8 @@ public class ServerFacade {
             return new RetrieveUserResponse(Rudy);
         } else if (request.getUsername().equals(BillBelichick.getAlias())) {
             return new RetrieveUserResponse(BillBelichick);
+        } else if (request.getUsername().equals(TestUser.getAlias())) {
+            return new RetrieveUserResponse(TestUser);
         } else {
             return null;
         }

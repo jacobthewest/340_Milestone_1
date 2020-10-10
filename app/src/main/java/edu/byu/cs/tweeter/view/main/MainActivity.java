@@ -8,7 +8,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,22 +19,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.service.request.CountRequest;
-import edu.byu.cs.tweeter.model.service.request.LoginRequest;
 import edu.byu.cs.tweeter.model.service.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.service.response.CountResponse;
+import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
 import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
 import edu.byu.cs.tweeter.presenter.CountPresenter;
+import edu.byu.cs.tweeter.presenter.FollowingPresenter;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
 import edu.byu.cs.tweeter.presenter.UpdateFollowPresenter;
 import edu.byu.cs.tweeter.view.HomeActivity;
 import edu.byu.cs.tweeter.view.asyncTasks.CountTask;
+import edu.byu.cs.tweeter.view.asyncTasks.GetFollowingTask;
 import edu.byu.cs.tweeter.view.asyncTasks.LogoutTask;
 import edu.byu.cs.tweeter.view.asyncTasks.UpdateFollowTask;
 import edu.byu.cs.tweeter.view.main.tweet.TweetFragment;
@@ -45,22 +44,24 @@ import edu.byu.cs.tweeter.view.util.ImageUtils;
  * The main activity for the application. Contains tabs for feed, story, following, and followers.
  */
 public class MainActivity extends AppCompatActivity implements MainPresenter.View, LogoutTask.Observer, CountPresenter.View, CountTask.Observer,
-        UpdateFollowPresenter.View, UpdateFollowTask.Observer {
+        UpdateFollowPresenter.View, UpdateFollowTask.Observer, FollowingPresenter.View, GetFollowingTask.Observer {
 
     public static final String CURRENT_USER_KEY = "CurrentUser";
     public static final String CURRENT_FOLLOW_KEY = "FollowUser";
-    public static final String FOLLOWING_KEY = "Following";
     public static final String AUTH_TOKEN_KEY = "AuthTokenKey";
     private static final String LOG_TAG = "MainActivity";
     private User user;
     private User followUser;
-    private List<User> following;
     private AuthToken authToken;
     private MainPresenter mainPresenter;
     private CountPresenter countPresenter;
     private UpdateFollowPresenter updateFollowPresenter;
+    private FollowingPresenter followingPresenter;
     private FragmentTransaction fragmentTransaction;
     private DialogFragment dialogFragment;
+    private Button logoutButton;
+    private Button followButton;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,14 +70,9 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
 
         this.user = (User) getIntent().getSerializableExtra(CURRENT_USER_KEY);
         this.followUser = (User) getIntent().getSerializableExtra(CURRENT_FOLLOW_KEY);
-        this.following = (List<User>) getIntent().getSerializableExtra(FOLLOWING_KEY);
 
         if(user == null) {
             throw new RuntimeException("User not passed to activity");
-        }
-
-        if(followUser == null) {
-            throw new RuntimeException("Follow user not passed to activity");
         }
 
         authToken = (AuthToken) getIntent().getSerializableExtra(AUTH_TOKEN_KEY);
@@ -85,11 +81,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         viewPager.setAdapter(mainSectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        Button logoutButton = findViewById(R.id.logoutButton);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        mainPresenter = new MainPresenter(this);
-        countPresenter = new CountPresenter(this);
-        updateFollowPresenter = new UpdateFollowPresenter(this);
+        setButtons();
+        setPresenters();
+
+        accountForOtherUserView();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +114,29 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         setCount();
     }
 
+    private void setPresenters() {
+        mainPresenter = new MainPresenter(this);
+        countPresenter = new CountPresenter(this);
+        updateFollowPresenter = new UpdateFollowPresenter(this);
+        followingPresenter = new FollowingPresenter(this);
+    }
+
+    private void setButtons() {
+        logoutButton = findViewById(R.id.logoutButton);
+        followButton = findViewById(R.id.followButton);
+        fab = findViewById(R.id.fab);
+    }
+
+    private void accountForOtherUserView() {
+        if (user.equals(followUser)) { // The view we are in is of the current, logged in user.
+            // Hide follow/unfollow buttons
+            this.followButton.setVisibility(View.GONE);
+        } else { // We are in another user's view
+            // Hide logout button
+            this.logoutButton.setVisibility(View.GONE);
+        }
+    }
+
     public MainPresenter getMainPresenter() {
         return this.mainPresenter;
     }
@@ -131,8 +149,12 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         return this.updateFollowPresenter;
     }
 
+    public FollowingPresenter getFollowPresenter() {
+        return this.followingPresenter;
+    }
+
     public void setCount() {
-        CountRequest countRequest = new CountRequest(this.followUser);
+        CountRequest countRequest = new CountRequest(this.user);
         CountTask countTask = new CountTask(getCountPresenter(), getCountObserver());
         countTask.execute(countRequest);
     }
@@ -162,6 +184,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
     }
 
     private UpdateFollowTask.Observer getUpdateFollowObserver() {
+        return this;
+    }
+
+    private GetFollowingTask.Observer getFollowingObserver() {
         return this;
     }
 
@@ -203,12 +229,18 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
 
     @Override
     public void updateFollowSuccessful(UpdateFollowResponse updateFollowResponse) {
-
+        // TODO: We need to increment the following count in the header if we followed them. Decrement if we unfollowed them
     }
 
     @Override
     public void updateFollowUnsuccessful(UpdateFollowResponse updateFollowResponse) {
         Toast.makeText(this, "Failed to follow/unfollow the user: " + updateFollowResponse.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void followeesRetrieved(FollowingResponse followingResponse) {
+        // TODO: What do we do with the followees retrieved?
+            // We see if the followUser view is someone that the user follows. If so, then we display the unfollow button, else, keep the following button
     }
 
     @Override
