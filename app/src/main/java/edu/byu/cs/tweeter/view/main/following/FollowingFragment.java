@@ -27,6 +27,8 @@ import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 import edu.byu.cs.tweeter.presenter.FollowingPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFollowingTask;
+import edu.byu.cs.tweeter.view.main.MainActivity;
+import edu.byu.cs.tweeter.view.util.AliasClickableSpan;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
 /**
@@ -36,6 +38,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
 
     private static final String LOG_TAG = "FollowingFragment";
     private static final String USER_KEY = "UserKey";
+    private static final String FOLLOW_KEY = "followKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
     private static final int LOADING_DATA_VIEW = 0;
@@ -44,6 +47,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
     private static final int PAGE_SIZE = 10;
 
     private User user;
+    private User followUser;
     private AuthToken authToken;
     private FollowingPresenter presenter;
 
@@ -54,14 +58,16 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
      * bundle assigned to the fragment.
      *
      * @param user the logged in user.
+     * @param followUser the user in the view.
      * @param authToken the auth token for this user's session.
      * @return the fragment.
      */
-    public static FollowingFragment newInstance(User user, AuthToken authToken) {
+    public static FollowingFragment newInstance(User user, User followUser, AuthToken authToken) {
         FollowingFragment fragment = new FollowingFragment();
 
         Bundle args = new Bundle(2);
         args.putSerializable(USER_KEY, user);
+        args.putSerializable(FOLLOW_KEY, followUser);
         args.putSerializable(AUTH_TOKEN_KEY, authToken);
 
         fragment.setArguments(args);
@@ -75,6 +81,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+        followUser = (User) getArguments().getSerializable(FOLLOW_KEY);
         authToken = (AuthToken) getArguments().getSerializable(AUTH_TOKEN_KEY);
 
         presenter = new FollowingPresenter(this);
@@ -86,9 +93,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
 
         followingRecyclerViewAdapter = new FollowingRecyclerViewAdapter();
         followingRecyclerView.setAdapter(followingRecyclerViewAdapter);
-
         followingRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
-
         return view;
     }
 
@@ -116,7 +121,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
+                    new AliasClickableSpan(getActivity(), userAlias.getText().toString(), authToken).onClick(view);
                 }
             });
         }
@@ -256,7 +261,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             addLoadingFooter();
 
             GetFollowingTask getFollowingTask = new GetFollowingTask(presenter, this);
-            FollowingRequest request = new FollowingRequest(user, PAGE_SIZE, lastFollowee);
+            FollowingRequest request = new FollowingRequest(followUser, PAGE_SIZE, lastFollowee);
             getFollowingTask.execute(request);
         }
 
@@ -295,7 +300,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
          * loading footer view) at the bottom of the list.
          */
         private void addLoadingFooter() {
-            addItem(new User("Dummy", "User", ""));
+            addItem(new User("Dummy", "User", "", "password"));
         }
 
         /**

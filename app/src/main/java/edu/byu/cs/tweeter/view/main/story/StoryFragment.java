@@ -1,6 +1,9 @@
 package edu.byu.cs.tweeter.view.main.story;
 
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +32,11 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 import edu.byu.cs.tweeter.presenter.StoryPresenter;
+import edu.byu.cs.tweeter.view.util.AliasClickableSpan;
 import edu.byu.cs.tweeter.view.util.DatePrinter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetStoryTask;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
+import edu.byu.cs.tweeter.view.util.UrlClickableSpan;
 
 /**
  * The fragment that displays on the 'Story' tab.
@@ -40,6 +45,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
 
     private static final String LOG_TAG = "FollowingFragment";
     private static final String USER_KEY = "UserKey";
+    private static final String FOLLOW_KEY = "FollowKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
     private static final int LOADING_DATA_VIEW = 0;
@@ -48,6 +54,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
     private static final int PAGE_SIZE = 10;
 
     private User user;
+    private User followUser;
     private AuthToken authToken;
     private StoryPresenter presenter;
 
@@ -58,14 +65,16 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
      * bundle assigned to the fragment.
      *
      * @param user the logged in user.
+     * @param followUser the user in the view.
      * @param authToken the auth token for this user's session.
      * @return the fragment.
      */
-    public static StoryFragment newInstance(User user, AuthToken authToken) {
+    public static StoryFragment newInstance(User user, User followUser, AuthToken authToken) {
         StoryFragment fragment = new StoryFragment();
 
         Bundle args = new Bundle(2);
         args.putSerializable(USER_KEY, user);
+        args.putSerializable(FOLLOW_KEY, followUser);
         args.putSerializable(AUTH_TOKEN_KEY, authToken);
 
         fragment.setArguments(args);
@@ -79,6 +88,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+        followUser = (User) getArguments().getSerializable(FOLLOW_KEY);
         authToken = (AuthToken) getArguments().getSerializable(AUTH_TOKEN_KEY);
 
         presenter = new StoryPresenter(this);
@@ -126,7 +136,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
+                    new AliasClickableSpan(getActivity(), userAlias.getText().toString(), authToken).onClick(view);
                 }
             });
         }
@@ -137,13 +147,15 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
          * @param status the status.
          */
         void bindStatus(Status status) {
-            String tempPostText = formulatePostText(status);
+            SpannableString tempPostText = formulatePostText(status); // TODO: Update this thing right here.
             String tempTimePosted = formulateTimePosted(status.getTimePosted());
+            User statusUser = status.getUser();
 
-            userImage.setImageDrawable(ImageUtils.drawableFromByteArray(user.getImageBytes()));
-            userAlias.setText(user.getAlias());
-            userName.setText(user.getName());
+            userImage.setImageDrawable(ImageUtils.drawableFromByteArray(followUser.getImageBytes()));
+            userAlias.setText(statusUser.getAlias());
+            userName.setText(statusUser.getName());
             postText.setText(tempPostText);
+            postText.setMovementMethod(LinkMovementMethod.getInstance());
             timePosted.setText(tempTimePosted);
         }
 
@@ -152,35 +164,27 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
          * @param status
          * @return A string with clickable links
          */
-        private String formulatePostText(Status status) {
-            Writer out = new StringWriter();
-            String imageUrl = "";
-            String videoUrl = "";
+        private SpannableString formulatePostText(Status status) {
+            String tweetText = status.getTweetText();
+            Spannable spannable = new SpannableString(tweetText);
 
-//            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
-//                imageUrl = "\nImage URL: " + status.getImageUrl();
-//            }
-//
-//            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
-//                videoUrl = "\nVideo URL: " + status.getVideoUrl();
-//            }
-
-            try {
-//                out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
-                out.write(status.getTweetText());
-                boolean mentionsPrinted = false;
-                List<String> mentions = status.getMentions();
-                for(int i = 0; i < mentions.size(); i++) {
-                    if(!mentionsPrinted && (!mentions.get(i).equals("") && !mentions.get(i).equals(null))) {
-                        out.write("\nMentions: ");
-                        mentionsPrinted = true;
-                    }
-                    out.write(status.getMentions().get(i) + " ");
+            if(status.getUrls() != null) {
+                for(String url : status.getUrls()) {
+                    int startIndex = tweetText.indexOf(url);
+                    int endIndex = startIndex + url.length();
+                    spannable.setSpan(new UrlClickableSpan(url, getActivity()), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
-            } catch(Exception e) {
-                return "Error in StoryFragment.FormulatePostText()";
             }
-            return out.toString();
+
+            if(status.getMentions() != null) {
+                for(String mention : status.getMentions()) {
+                    int startIndex = tweetText.indexOf(mention);
+                    int endIndex = startIndex + mention.length();
+                    spannable.setSpan(new AliasClickableSpan(getActivity(), mention, authToken ), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+
+            return (SpannableString) spannable;
         }
 
         /**
@@ -317,7 +321,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             addLoadingFooter();
 
             GetStoryTask getStoryTask = new GetStoryTask(presenter, this);
-            StoryRequest request = new StoryRequest(user, PAGE_SIZE, lastStatus);
+            StoryRequest request = new StoryRequest(followUser, PAGE_SIZE, lastStatus);
             getStoryTask.execute(request);
         }
 
@@ -358,11 +362,8 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         private void addLoadingFooter() {
             List<String> mentions = getMentions();
             Calendar timePosted = getTimePosted();
-            String imageUrl = "https://preview.tinyurl.com/yxrxp5d2";
-            String videoUrl = "https://youtu.be/oHg5SJYRHA0";
             String postUrl = "Statuses are loading";
-//            addItem(new Status(new User("Dummy", "User", ""), postUrl, imageUrl, videoUrl, timePosted, mentions));
-            addItem(new Status(new User("Dummy", "User", ""), postUrl, null, timePosted, mentions));
+            addItem(new Status(new User("Dummy", "User", "", "password"), postUrl, null, timePosted, mentions));
         }
 
         /**
@@ -441,4 +442,5 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         }
     }
 }
+
 

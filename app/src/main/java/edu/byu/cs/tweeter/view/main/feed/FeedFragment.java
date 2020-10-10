@@ -46,6 +46,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
 
     private static final String LOG_TAG = "FollowingFragment";
     private static final String USER_KEY = "UserKey";
+    private static final String FOLLOW_KEY = "FollowKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
     private static final int LOADING_DATA_VIEW = 0;
@@ -54,6 +55,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
     private static final int PAGE_SIZE = 10;
 
     private User user;
+    private User followUser;
     private AuthToken authToken;
     private FeedPresenter presenter;
 
@@ -64,14 +66,16 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
      * bundle assigned to the fragment.
      *
      * @param user the logged in user.
+     * @param followUser the user in the view.
      * @param authToken the auth token for this user's session.
      * @return the fragment.
      */
-    public static FeedFragment newInstance(User user, AuthToken authToken) {
+    public static FeedFragment newInstance(User user, User followUser, AuthToken authToken) {
         FeedFragment fragment = new FeedFragment();
 
         Bundle args = new Bundle(2);
         args.putSerializable(USER_KEY, user);
+        args.putSerializable(FOLLOW_KEY, followUser);
         args.putSerializable(AUTH_TOKEN_KEY, authToken);
 
         fragment.setArguments(args);
@@ -85,6 +89,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+        followUser = (User) getArguments().getSerializable(FOLLOW_KEY);
         authToken = (AuthToken) getArguments().getSerializable(AUTH_TOKEN_KEY);
 
         presenter = new FeedPresenter(this);
@@ -126,8 +131,14 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             userAlias = itemView.findViewById(R.id.userAlias);
             userName = itemView.findViewById(R.id.userName);
             timePosted = itemView.findViewById(R.id.timePosted);
-
             postText = itemView.findViewById(R.id.postText);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new AliasClickableSpan(getActivity(), userAlias.getText().toString(), authToken).onClick(view);
+                }
+            });
         }
 
         /**
@@ -155,7 +166,8 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          */
         private SpannableString formulatePostText(Status status) {
             String tweetText = status.getTweetText();
-            Spannable spannable = new SpannableString(status.getTweetText());
+            Spannable spannable = new SpannableString(tweetText);
+
             if(status.getUrls() != null) {
                 for(String url : status.getUrls()) {
                     int startIndex = tweetText.indexOf(url);
@@ -168,43 +180,11 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
                 for(String mention : status.getMentions()) {
                     int startIndex = tweetText.indexOf(mention);
                     int endIndex = startIndex + mention.length();
-                    String extraction = tweetText.substring(startIndex, endIndex);
-                    SpannableString string = new SpannableString("Text with clickable text");
-                    string.setSpan(new AliasClickableSpan(this, mention, I_NEED_A_PASSWORD_NOT_AN_AUTH_TOKEN ), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannable.setSpan(new AliasClickableSpan(getActivity(), mention, authToken ), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
 
             return (SpannableString) spannable;
-
-//
-//            Writer out = new StringWriter();
-//            String imageUrl = "";
-//            String videoUrl = "";
-//
-////            if(!status.getImageUrl().equals("") && !status.getImageUrl().equals(null)) {
-////                imageUrl = "\nImage URL: " + status.getImageUrl();
-////            }
-////
-////            if(!status.getVideoUrl().equals("") && !status.getVideoUrl().equals(null)) {
-////                videoUrl = "\nVideo URL: " + status.getVideoUrl();
-////            }
-//
-//            try {
-//                //out.write(status.getPostText() + imageUrl + videoUrl + status.getVideoUrl());
-//                out.write(status.getTweetText() + imageUrl + videoUrl);
-//                boolean mentionsPrinted = false;
-//                List<String> mentions = status.getMentions();
-//                for(int i = 0; i < mentions.size(); i++) {
-//                    if(!mentionsPrinted && (!mentions.get(i).equals("") && !mentions.get(i).equals(null))) {
-//                        out.write("\nMentions: ");
-//                        mentionsPrinted = true;
-//                    }
-//                    out.write(status.getMentions().get(i) + " ");
-//                }
-//            } catch(Exception e) {
-//                return "Error in FeedFragment.FormulatePostText()";
-//            }
-//            return out.toString();
         }
 
         /**
@@ -341,7 +321,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             addLoadingFooter();
 
             GetFeedTask getFeedTask = new GetFeedTask(presenter, this);
-            FeedRequest request = new FeedRequest(user, PAGE_SIZE, lastStatus);
+            FeedRequest request = new FeedRequest(followUser, PAGE_SIZE, lastStatus);
             getFeedTask.execute(request);
         }
 
@@ -382,10 +362,8 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
         private void addLoadingFooter() {
             List<String> mentions = getMentions();
             Calendar timePosted = getTimePosted();
-            String imageUrl = "https://preview.tinyurl.com/yxrxp5d2";
-            String videoUrl = "https://youtu.be/oHg5SJYRHA0";
             String postUrl = "Statuses are loading";
-            addItem(new Status(new User("Dummy", "User", ""), postUrl, null, timePosted, mentions));
+            addItem(new Status(new User("Dummy", "User", "", "password"), postUrl, null, timePosted, mentions));
         }
 
         /**

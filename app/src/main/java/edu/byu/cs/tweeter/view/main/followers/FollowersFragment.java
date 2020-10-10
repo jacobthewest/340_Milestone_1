@@ -30,6 +30,8 @@ import edu.byu.cs.tweeter.presenter.FollowersPresenter;
 import edu.byu.cs.tweeter.presenter.FollowingPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFollowersTask;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFollowingTask;
+import edu.byu.cs.tweeter.view.main.MainActivity;
+import edu.byu.cs.tweeter.view.util.AliasClickableSpan;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
 
 /**
@@ -39,6 +41,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
 
     private static final String LOG_TAG = "FollowersFragment";
     private static final String USER_KEY = "UserKey";
+    private static final String FOLLOW_KEY = "FollowKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
     private static final int LOADING_DATA_VIEW = 0;
@@ -47,6 +50,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
     private static final int PAGE_SIZE = 10;
 
     private User user;
+    private User followUser;
     private AuthToken authToken;
     private FollowersPresenter presenter;
 
@@ -57,14 +61,16 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
      * bundle assigned to the fragment.
      *
      * @param user the logged in user.
+     * @param followUser the user in the view.
      * @param authToken the auth token for this user's session.
      * @return the fragment.
      */
-    public static FollowersFragment newInstance(User user, AuthToken authToken) {
+    public static FollowersFragment newInstance(User user, User followUser, AuthToken authToken) {
         FollowersFragment fragment = new FollowersFragment();
 
         Bundle args = new Bundle(2);
         args.putSerializable(USER_KEY, user);
+        args.putSerializable(FOLLOW_KEY, followUser);
         args.putSerializable(AUTH_TOKEN_KEY, authToken);
 
         fragment.setArguments(args);
@@ -78,6 +84,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
 
         //noinspection ConstantConditions
         user = (User) getArguments().getSerializable(USER_KEY);
+        followUser = (User) getArguments().getSerializable(FOLLOW_KEY);
         authToken = (AuthToken) getArguments().getSerializable(AUTH_TOKEN_KEY);
 
         presenter = new FollowersPresenter(this);
@@ -89,9 +96,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
 
         followersRecyclerViewAdapter = new FollowersRecyclerViewAdapter();
         followersRecyclerView.setAdapter(followersRecyclerViewAdapter);
-
         followersRecyclerView.addOnScrollListener(new FollowRecyclerViewPaginationScrollListener(layoutManager));
-
         return view;
     }
 
@@ -119,7 +124,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
+                    new AliasClickableSpan(getActivity(), userAlias.getText().toString(), authToken).onClick(view);
                 }
             });
         }
@@ -259,7 +264,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
             addLoadingFooter();
 
             GetFollowersTask getFollowersTask = new GetFollowersTask(presenter, this);
-            FollowersRequest request = new FollowersRequest(user, PAGE_SIZE, lastFollower);
+            FollowersRequest request = new FollowersRequest(followUser, PAGE_SIZE, lastFollower);
             getFollowersTask.execute(request);
         }
 
@@ -298,7 +303,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
          * loading footer view) at the bottom of the list.
          */
         private void addLoadingFooter() {
-            addItem(new User("Dummy", "User", ""));
+            addItem(new User("Dummy", "User", "", "password"));
         }
 
         /**

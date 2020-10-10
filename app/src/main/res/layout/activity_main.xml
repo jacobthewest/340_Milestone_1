@@ -50,6 +50,7 @@
                 android:contentDescription="@string/userImageContentDescription" />
 
             <LinearLayout
+                android:id="@+id/mainActivityLinearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -79,7 +80,6 @@
                             android:id="@+id/followeeCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/followeeCount"
                             android:paddingHorizontal="5sp"/>
 
                     <Space
@@ -90,12 +90,20 @@
                             android:id="@+id/followerCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/followerCount"
                             android:paddingHorizontal="5sp"/>
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/followButton"
+                android:layout_height="50dp"
+                android:layout_width="200dp"
+                android:layout_toEndOf="@+id/mainActivityLinearLayout"
+                android:layout_marginLeft="20dp"
+                android:layout_centerVertical="true"
+                />
 
         </RelativeLayout>
 
@@ -106,12 +114,6 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary" />
     </com.google.android.material.appbar.AppBarLayout>
-
-<!--    <fragment-->
-<!--        android:id="@+id/tweetFragment"-->
-<!--        android:tag="dialog"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="match_parent"/>-->
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"

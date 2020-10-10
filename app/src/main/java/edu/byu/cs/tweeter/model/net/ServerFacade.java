@@ -3,7 +3,9 @@ package edu.byu.cs.tweeter.model.net;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
+import java.text.RuleBasedCollator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -12,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 import edu.byu.cs.tweeter.BuildConfig;
+import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.service.request.CountRequest;
 import edu.byu.cs.tweeter.model.service.request.FeedRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
@@ -25,6 +29,8 @@ import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.service.request.RetrieveUserRequest;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.request.SubmitTweetRequest;
+import edu.byu.cs.tweeter.model.service.request.UpdateFollowRequest;
+import edu.byu.cs.tweeter.model.service.response.CountResponse;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
@@ -34,17 +40,74 @@ import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
 import edu.byu.cs.tweeter.model.service.response.RetrieveUserResponse;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 import edu.byu.cs.tweeter.model.service.response.SubmitTweetResponse;
+import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
 
 /**
  * Acts as a Facade to the Tweeter server. All network requests to the server should go through
  * this class.
  */
 public class ServerFacade {
+    private static Map<User, List<Status>> storyStatusesByUser;
+    private static Map<User, List<Status>> feedStatusesByUser;
 
-    private static Map<User, List<User>> followeesByFollower;
-    private static Map<User, List<User>> followersByFollower;
-    private static Map<User, List<Status>> statusesByUser;
-    private static Map<User, List<Status>> feedStatuses;
+    // This is the hard coded followee data returned by the 'getFollowees()' method
+    private static final String MALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
+    private static final String FEMALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png";
+    private static final String MIKE = "https://i.imgur.com/VZQQiQ1.jpg";
+
+    private final User user1 = new User("Allen", "Anderson", MALE_IMAGE_URL, "password");
+    private final User user2 = new User("Amy", "Ames", FEMALE_IMAGE_URL, "password");
+    private final User user3 = new User("Bob", "Bobson", MALE_IMAGE_URL, "password");
+    private final User user4 = new User("Bonnie", "Beatty", FEMALE_IMAGE_URL, "password");
+    private final User user5 = new User("Chris", "Colston", MALE_IMAGE_URL, "password");
+    private final User user6 = new User("Cindy", "Coats", FEMALE_IMAGE_URL, "password");
+    private final User user7 = new User("Dan", "Donaldson", MALE_IMAGE_URL, "password");
+    private final User user8 = new User("Dee", "Dempsey", FEMALE_IMAGE_URL, "password");
+    private final User user9 = new User("Elliott", "Enderson", MALE_IMAGE_URL, "password");
+    private final User user10 = new User("Elizabeth", "Engle", FEMALE_IMAGE_URL, "password");
+    private final User user11 = new User("Frank", "Frandson", MALE_IMAGE_URL, "password");
+    private final User user12 = new User("Fran", "Franklin", FEMALE_IMAGE_URL, "password");
+    private final User user13 = new User("Gary", "Gilbert", MALE_IMAGE_URL, "password");
+    private final User user14 = new User("Giovanna", "Giles", FEMALE_IMAGE_URL, "password");
+    private final User user15 = new User("Henry", "Henderson", MALE_IMAGE_URL, "password");
+    private final User user16 = new User("Helen", "Hopwell", FEMALE_IMAGE_URL, "password");
+    private final User user17 = new User("Igor", "Isaacson", MALE_IMAGE_URL, "password");
+    private final User user18 = new User("Isabel", "Isaacson", FEMALE_IMAGE_URL, "password");
+    private final User user19 = new User("Justin", "Jones", MALE_IMAGE_URL, "password");
+    private final User user20 = new User("Jill", "Johnson", FEMALE_IMAGE_URL, "password");
+    private final User JacobWest = new User("Jacob", "West", "@JacobWest", MIKE, "password");
+    private final User RickyMartin = new User("Ricky", "Martin", "@RickyMartin", MIKE, "password");
+    private final User RobertGardner = new User("Robert", "Gardner", "@RobertGardner", MIKE, "password");
+    private final User Snowden = new User("The", "Snowden", "@Snowden", MIKE, "password");
+    private final User TristanThompson = new User("Tristan", "Thompson", "@TristanThompson", MIKE, "password");
+    private final User KCP = new User("Kontavius", "Caldwell Pope", "@KCP", MIKE, "password");
+    private final User theMedia = new User("the", "Media", "@theMedia", MIKE, "password");
+    private final User Rudy = new User("Rudy", "Gobert", "@Rudy", MIKE, "password");
+    private final User BillBelichick = new User("Bill", "Belichick", "@BillBelichick", MIKE, "password");
+    private final User TestUser = new User("Test", "User", "@TestUser", MALE_IMAGE_URL, "password");
+
+
+    public UpdateFollowResponse updateFollow(UpdateFollowRequest request) {
+        List<User> following = getDummyFollowees();
+
+        if(request.followTheFollowUser()) { // Then follow the followUser
+            if(!following.contains(request.getFollowUser())) {
+                following.add(request.getFollowUser());
+            }
+        } else { // Unfollow the followUser
+            if(following.contains(request.getFollowUser())) {
+                following.remove(request.getFollowUser());
+            }
+        }
+        return new UpdateFollowResponse(request.getUser(), request.getFollowUser(), following);
+    }
+
+
+    public CountResponse getCount(CountRequest request) {
+        int followingCount = (getDummyFollowees().size());
+        int followersCount = (getDummyFollowers().size());
+        return new CountResponse(request.getUser(), followingCount, followersCount);
+    }
 
     /**
      * Performs a save of the status to the database. This function doesn't actually make a network request.
@@ -66,7 +129,7 @@ public class ServerFacade {
      */
     public LoginResponse login(LoginRequest request) {
         //"https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
-        User user = new User("Test", "User", "https://i.imgur.com/VZQQiQ1.jpg");
+        User user = new User("Test", "User", "https://i.imgur.com/VZQQiQ1.jpg", "password");
         return new LoginResponse(user, new AuthToken(user.getAlias()));
     }
 
@@ -79,8 +142,67 @@ public class ServerFacade {
      * @return the login response.
      */
     public RetrieveUserResponse retrieveUser(RetrieveUserRequest request) {
-
-        return new LoginResponse(user, new AuthToken(user.getAlias()));
+        if (request.getUsername().equals(user1.getAlias())) {
+            return new RetrieveUserResponse(user1);
+        } else if (request.getUsername().equals(user2.getAlias())) {
+            return new RetrieveUserResponse(user2);
+        } else if (request.getUsername().equals(user3.getAlias())) {
+            return new RetrieveUserResponse(user3);
+        } else if (request.getUsername().equals(user4.getAlias())) {
+            return new RetrieveUserResponse(user4);
+        } else if (request.getUsername().equals(user5.getAlias())) {
+            return new RetrieveUserResponse(user5);
+        } else if (request.getUsername().equals(user6.getAlias())) {
+            return new RetrieveUserResponse(user6);
+        } else if (request.getUsername().equals(user7.getAlias())) {
+            return new RetrieveUserResponse(user7);
+        } else if (request.getUsername().equals(user8.getAlias())) {
+            return new RetrieveUserResponse(user8);
+        } else if (request.getUsername().equals(user9.getAlias())) {
+            return new RetrieveUserResponse(user9);
+        } else if (request.getUsername().equals(user10.getAlias())) {
+            return new RetrieveUserResponse(user10);
+        } else if (request.getUsername().equals(user11.getAlias())) {
+            return new RetrieveUserResponse(user11);
+        } else if (request.getUsername().equals(user12.getAlias())) {
+            return new RetrieveUserResponse(user12);
+        } else if (request.getUsername().equals(user13.getAlias())) {
+            return new RetrieveUserResponse(user13);
+        } else if (request.getUsername().equals(user14.getAlias())) {
+            return new RetrieveUserResponse(user14);
+        } else if (request.getUsername().equals(user15.getAlias())) {
+            return new RetrieveUserResponse(user15);
+        } else if (request.getUsername().equals(user16.getAlias())) {
+            return new RetrieveUserResponse(user16);
+        } else if (request.getUsername().equals(user17.getAlias())) {
+            return new RetrieveUserResponse(user17);
+        } else if (request.getUsername().equals(user18.getAlias())) {
+            return new RetrieveUserResponse(user18);
+        } else if (request.getUsername().equals(user19.getAlias())) {
+            return new RetrieveUserResponse(user19);
+        } else if (request.getUsername().equals(user20.getAlias())) {
+            return new RetrieveUserResponse(user20);
+        } else if (request.getUsername().equals(JacobWest.getAlias())) {
+            return new RetrieveUserResponse(JacobWest);
+        } else if (request.getUsername().equals(RickyMartin.getAlias())) {
+            return new RetrieveUserResponse(RickyMartin);
+        } else if (request.getUsername().equals(RobertGardner.getAlias())) {
+            return new RetrieveUserResponse(RobertGardner);
+        } else if (request.getUsername().equals(Snowden.getAlias())) {
+            return new RetrieveUserResponse(Snowden);
+        } else if (request.getUsername().equals(TristanThompson.getAlias())) {
+            return new RetrieveUserResponse(TristanThompson);
+        } else if (request.getUsername().equals(KCP.getAlias())) {
+            return new RetrieveUserResponse(KCP);
+        } else if (request.getUsername().equals(theMedia.getAlias())) {
+            return new RetrieveUserResponse(theMedia);
+        } else if (request.getUsername().equals(Rudy.getAlias())) {
+            return new RetrieveUserResponse(Rudy);
+        } else if (request.getUsername().equals(BillBelichick.getAlias())) {
+            return new RetrieveUserResponse(BillBelichick);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -117,7 +239,7 @@ public class ServerFacade {
      * @return the register response.
      */
     public RegisterResponse register(RegisterRequest request) {
-        User user = new User(request.getFirstName(), request.getLastName(), request.getImageUrl(), request.getImageBytes());
+        User user = new User(request.getFirstName(), request.getLastName(), request.getImageUrl(), request.getImageBytes(), request.getPassword());
         return new RegisterResponse(user, new AuthToken(user.getAlias()));
     }
 
@@ -144,25 +266,19 @@ public class ServerFacade {
             }
         }
 
-        if(followeesByFollower == null) {
-            followeesByFollower = initializeFollowees();
-        }
-
-        List<User> allFollowees = followeesByFollower.get(request.getUser());
+        List<User> allFollowees = getDummyFollowees();
         List<User> responseFollowees = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
 
         if(request.getLimit() > 0) {
-            if (allFollowees != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastFollowee(), allFollowees);
+            int followeesIndex = getFolloweesStartingIndex(request.getLastFollowee(), allFollowees);
 
-                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseFollowees.add(allFollowees.get(followeesIndex));
-                }
-
-                hasMorePages = followeesIndex < allFollowees.size();
+            for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+                responseFollowees.add(allFollowees.get(followeesIndex));
             }
+
+            hasMorePages = followeesIndex < allFollowees.size();
         }
 
         return new FollowingResponse(responseFollowees, hasMorePages);
@@ -255,25 +371,19 @@ public class ServerFacade {
             }
         }
 
-        if(followersByFollower == null) {
-            followersByFollower = initializeFollowers();
-        }
-
-        List<User> allFollowers = followersByFollower.get(request.getUser());
+        List<User> allFollowers = getDummyFollowers();
         List<User> responseFollowers = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
 
         if(request.getLimit() > 0) {
-            if (allFollowers != null) {
-                int followersIndex = getFollowersStartingIndex(request.getLastFollower(), allFollowers);
+            int followersIndex = getFollowersStartingIndex(request.getLastFollower(), allFollowers);
 
-                for(int limitCounter = 0; followersIndex < allFollowers.size() && limitCounter < request.getLimit(); followersIndex++, limitCounter++) {
-                    responseFollowers.add(allFollowers.get(followersIndex));
-                }
-
-                hasMorePages = followersIndex < allFollowers.size();
+            for(int limitCounter = 0; followersIndex < allFollowers.size() && limitCounter < request.getLimit(); followersIndex++, limitCounter++) {
+                responseFollowers.add(allFollowers.get(followersIndex));
             }
+
+            hasMorePages = followersIndex < allFollowers.size();
         }
 
         return new FollowersResponse(responseFollowers, hasMorePages);
@@ -331,11 +441,11 @@ public class ServerFacade {
             }
         }
 
-        if(statusesByUser == null) {
-            statusesByUser = getStoryStatusList(request.getUser());
+        if(storyStatusesByUser == null) {
+            storyStatusesByUser = initializeStory();
         }
 
-        List<Status> allStatuses = statusesByUser.get(request.getUser());
+        List<Status> allStatuses = storyStatusesByUser.get(request.getUser());
         List<Status> responseStatuses = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -382,11 +492,11 @@ public class ServerFacade {
             }
         }
 
-        if(feedStatuses == null) {
-            feedStatuses = getFeedStatusList(request.getUser());
+        if(feedStatusesByUser == null) {
+            feedStatusesByUser = initializeFeed();
         }
 
-        List<Status> allStatuses = feedStatuses.get(request.getUser());
+        List<Status> allStatuses = feedStatusesByUser.get(request.getUser());
         List<Status> responseStatuses = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -410,44 +520,6 @@ public class ServerFacade {
         return new FeedResponse(responseStatuses, hasMorePages);
     }
 
-    /**
-     * Gets a list of statuses to be returned.
-     */
-    private Map<User, List<Status>> getFeedStatusList(User user) {
-        Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
-
-        // Here to make a newly registered user have no followers/followees
-        if(!user.getFirstName().equals("Test") || !user.getLastName().equals("User")) {
-            List<Status> statusList = new ArrayList<>();
-            returnMe.put(new User("new", "regristration", ""), statusList);
-            return returnMe;
-        }
-
-        returnMe.put(user, get21Statuses(null));
-        return returnMe; // Won't ever get past this.
-
-//        List<Date> timesPosted = get21DatesSorted();
-//        List<String> postTexts = get21PostTexts();
-//        List<String> mentions = get21Mentions();
-//        List<User> users = get21Users();
-//
-//        for(int i = 0; i < 21; i++) {
-//            String postText = postTexts.get(i);
-//            String mention = mentions.get(i);
-//            List<String> mentionForStatus = new ArrayList<>();
-//            mentionForStatus.add(mention);
-//            Date d = timesPosted.get(i);
-//            Calendar tempTime = Calendar.getInstance();
-//            tempTime.setTime(d);
-//            User tempUser = users.get(i);
-//            Status s = new Status(tempUser, postText, null, tempTime, mentionForStatus);
-//            statusList.add(s);
-//        }
-//
-//        returnMe.put(user, statusList);
-//        return returnMe;
-    }
-
 
     private List<Status> get21Statuses(User definedUser) {
         List<Status> feed = new ArrayList<>();
@@ -455,7 +527,6 @@ public class ServerFacade {
 
         if(definedUser == null) {
             // --------------------- 1--------------------- //
-            User user = new User("Bill", "Adams", imageURL);
             List<String> uOne = new ArrayList<>();
             uOne.add("multiply.com");
             List<String> mOne = new ArrayList<>();
@@ -464,49 +535,44 @@ public class ServerFacade {
             Date d = createDate(2020, 0, 11, 0, 13);
             Calendar a = Calendar.getInstance();
             a.setTime(d);
-            Status s = new Status(user, "This is a text @JacobWest @RickyMartin multiply.com", uOne, a, mOne);
+            Status s = new Status(BillBelichick, "This is a text @JacobWest @RickyMartin multiply.com", uOne, a, mOne);
             feed.add(s); // # 1
 
             // --------------------- 2 --------------------- //
-            user = new User("Colin", "Cowherd", imageURL);
             List<String> uTwo = new ArrayList<>();
             uTwo.add("tinyurl.com");
             d = createDate(2020, 0, 11, 0, 14);
             Calendar b = Calendar.getInstance();
             b.setTime(d);
-            s = new Status(user, "You should visit tinyurl.com", uTwo, b, null);
+            s = new Status(Rudy, "You should visit tinyurl.com", uTwo, b, null);
             feed.add(s);
 
             // --------------------- 3 --------------------- //
-            user = new User("James", "Shulte", imageURL);
             List<String> mThree = new ArrayList<>();
             mThree.add("@JacobWest");
             d = createDate(2019, 3, 16, 3, 34);
             Calendar c = Calendar.getInstance();
             c.setTime(d);
-            s = new Status(user, "Dolphins @JacobWest have Tua", null, c, mThree);
+            s = new Status(theMedia, "Dolphins @JacobWest have Tua", null, c, mThree);
             feed.add(s);
 
             // --------------------- 4 --------------------- //
-            user = new User("Joe", "Flacco", imageURL);
             d = createDate(2014, 7, 30, 17, 01);
             Calendar de = Calendar.getInstance();
             de.setTime(d);
-            s = new Status(user, "Jacksonville will draft third", null, de, null);
+            s = new Status(JacobWest, "Jacksonville will draft third", null, de, null);
             feed.add(s);
 
             // --------------------- 5 --------------------- //
-            user = new User("Lebron", "James", imageURL);
             List<String> uFive = new ArrayList<>();
             uFive.add("dell.com");
             d = createDate(2012, 3, 3, 18, 21);
             Calendar e = Calendar.getInstance();
             e.setTime(d);
-            s = new Status(user, "I endorse dell.com", uFive, e, null);
+            s = new Status(RickyMartin, "I endorse dell.com", uFive, e, null);
             feed.add(s);
 
             // --------------------- 6 --------------------- //
-            user = new User("Aaron", "Rodgers", imageURL);
             List<String> mSix = new ArrayList<>();
             mSix.add("@RobertGardner");
             mSix.add("@Snowden");
@@ -514,43 +580,38 @@ public class ServerFacade {
             d = createDate(2002, 10, 19, 14, 59);
             Calendar f = Calendar.getInstance();
             f.setTime(d);
-            s = new Status(user, "@RobertGardner @Snowden @TristanThompson", null, f, mSix);
+            s = new Status(theMedia, "@RobertGardner @Snowden @TristanThompson", null, f, mSix);
             feed.add(s);
 
             // --------------------- 7 --------------------- //
-            user = new User("Kyle", "West", imageURL);
             d = createDate(2000, 10, 19, 14, 59);
             Calendar g = Calendar.getInstance();
             g.setTime(d);
-            s = new Status(user, ";)", null, g, null);
+            s = new Status(KCP, ";)", null, g, null);
             feed.add(s);
 
             // --------------------- 8 --------------------- //
-            user = new User("Random", "Dude", imageURL);
             d = createDate(2003, 5, 30, 16, 11);
             Calendar h = Calendar.getInstance();
             h.setTime(d);
-            s = new Status(user, "One, two, pick and roll", null, h, null);
+            s = new Status(TristanThompson, "One, two, pick and roll", null, h, null);
             feed.add(s);
 
             // --------------------- 9 --------------------- //
-            user = new User("Another", "Dude", imageURL);
             d = createDate(2001, 9, 4, 18, 29);
             Calendar i = Calendar.getInstance();
             i.setTime(d);
-            s = new Status(user, "A lot of old guys past their prime.", null, i, null);
+            s = new Status(Snowden, "A lot of old guys past their prime.", null, i, null);
             feed.add(s);
 
             // --------------------- 10 --------------------- //
-            user = new User("Tristan", "Thompson", imageURL);
             d = createDate(2019, 8, 12, 19, 1);
             Calendar j = Calendar.getInstance();
             j.setTime(d);
-            s = new Status(user, "I remember being a role player.", null, j, null);
+            s = new Status(TristanThompson, "I remember being a role player.", null, j, null);
             feed.add(s);
 
             // --------------------- 11 --------------------- //
-            user = new User("Tristan", "Thompson", imageURL);
             List<String> uEleven = new ArrayList<>();
             List<String> mEleven = new ArrayList<>();
             uEleven.add("salon.com");
@@ -558,30 +619,27 @@ public class ServerFacade {
             d = createDate(2007, 4, 15, 4, 43);
             Calendar k = Calendar.getInstance();
             k.setTime(d);
-            s = new Status(user, "Why did we sign him? @KCP. salon.com", uEleven, k, mEleven);
+            s = new Status(theMedia, "Why did we sign him? @KCP. salon.com", uEleven, k, mEleven);
             feed.add(s);
 
             // --------------------- 12 --------------------- //
-            user = new User("Donnovan", "Mitchell", imageURL);
             List<String> mTwelve = new ArrayList<>();
             mTwelve.add("@theMedia");
             mTwelve.add("@Rudy");
             d = createDate(2016, 8, 9, 8, 5);
             Calendar l = Calendar.getInstance();
             l.setTime(d);
-            s = new Status(user, "Rudy and I are chill @theMedia @Rudy", null, l, mTwelve);
+            s = new Status(BillBelichick, "Rudy and I are chill @theMedia @Rudy", null, l, mTwelve);
             feed.add(s);
 
             // --------------------- 13 --------------------- //
-            user = new User("Mr.", "Tinkerer", imageURL);
             d = createDate(2013, 3, 13, 9, 56);
             Calendar m = Calendar.getInstance();
             m.setTime(d);
-            s = new Status(user, "I am the tinker man!", null, m, null);
+            s = new Status(JacobWest, "I am the tinker man!", null, m, null);
             feed.add(s);
 
             // --------------------- 14 --------------------- //
-            user = new User("Cam", "Newton", imageURL);
             List<String> uFourteen = new ArrayList<>();
             List<String> mFourteen = new ArrayList<>();
             uFourteen.add("https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg");
@@ -589,63 +647,56 @@ public class ServerFacade {
             d = createDate(2013, 3, 13, 9, 55);
             Calendar n = Calendar.getInstance();
             n.setTime(d);
-            s = new Status(user, "We are the new power couple @BillBelichick https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg", uFourteen, n, mFourteen);
+            s = new Status(JacobWest, "We are the new power couple @BillBelichick https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg", uFourteen, n, mFourteen);
             feed.add(s);
 
             // --------------------- 15 --------------------- //
-            user = new User("Jason", "Kidd", imageURL);
             d = createDate(2012, 3, 13, 9, 55);
             Calendar o = Calendar.getInstance();
             o.setTime(d);
-            s = new Status(user, "That takes a lot of ownership!", null, o, null);
+            s = new Status(Snowden, "That takes a lot of ownership!", null, o, null);
             feed.add(s);
 
             // --------------------- 16 --------------------- //
-            user = new User("Nikola", "Yokic", imageURL);
             d = createDate(2012, 3, 12, 9, 55);
             Calendar p = Calendar.getInstance();
             p.setTime(d);
-            s = new Status(user, "We beat the clippers!", null, p, null);
+            s = new Status(TristanThompson, "We beat the clippers!", null, p, null);
             feed.add(s);
 
             // --------------------- 17 --------------------- //
-            user = new User("Taysom", "Hill", imageURL);
             d = createDate(2012, 3, 12, 9, 45);
             Calendar q = Calendar.getInstance();
             q.setTime(d);
-            s = new Status(user, "I lift bro!", null, q, null);
+            s = new Status(BillBelichick, "I lift bro!", null, q, null);
             feed.add(s);
 
             // --------------------- 18 --------------------- //
-            user = new User("Jenny", "Briggs", imageURL);
             d = createDate(2010, 8, 17, 9, 55);
             Calendar r = Calendar.getInstance();
             r.setTime(d);
-            s = new Status(user, "The truth is an acquired taste.", null, r, null);
+            s = new Status(Rudy, "The truth is an acquired taste.", null, r, null);
             feed.add(s);
 
             // --------------------- 19 --------------------- //
-            user = new User("Bad", "Bunny", imageURL);
             d = createDate(2020, 8, 17, 9, 55);
             Calendar sa = Calendar.getInstance();
             sa.setTime(d);
-            s = new Status(user, "Encuentra la buena vida baby! #CoronaLite", null, sa, null);
+            s = new Status(RickyMartin, "Encuentra la buena vida baby! #CoronaLite", null, sa, null);
             feed.add(s);
 
             // --------------------- 20 --------------------- //
-            user = new User("Bad", "Bunny", imageURL);
             d = createDate(2020, 0, 27, 23, 55);
             Calendar t = Calendar.getInstance();
             t.setTime(d);
-            s = new Status(user, "Me calle bien el Snoop Dogg", null, t, null);
+            s = new Status(KCP, "Me calle bien el Snoop Dogg", null, t, null);
             feed.add(s);
 
             // --------------------- 21 --------------------- //
-            user = new User("Bad", "Bunny", imageURL);
             d = createDate(2020, 3, 7, 9, 4);
             Calendar u = Calendar.getInstance();
             u.setTime(d);
-            s = new Status(user, "Hago buena musica", null, u, null);
+            s = new Status(RobertGardner, "Hago buena musica", null, u, null);
             feed.add(s);
         } else {
             // --------------------- 1--------------------- //
@@ -827,19 +878,107 @@ public class ServerFacade {
     /**
      * Gets a list of statuses by user to be returned.
      */
-    private Map<User, List<Status>> getStoryStatusList(User user) {
+    private Map<User, List<Status>> initializeFeed() {
         Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
-        List<Status> statusList = new ArrayList<>();
+        List<Status> statuses = get21Statuses(null);
+        returnMe.put(user1, statuses);
+        returnMe.put(user2, statuses);
+        returnMe.put(user3, statuses);
+        returnMe.put(user4, statuses);
+        returnMe.put(user5, statuses);
+        returnMe.put(user6, statuses);
+        returnMe.put(user7, statuses);
+        returnMe.put(user8, statuses);
+        returnMe.put(user9, statuses);
+        returnMe.put(user10, statuses);
+        returnMe.put(user11, statuses);
+        returnMe.put(user12, statuses);
+        returnMe.put(user13, statuses);
+        returnMe.put(user14, statuses);
+        returnMe.put(user15, statuses);
+        returnMe.put(user16, statuses);
+        returnMe.put(user17, statuses);
+        returnMe.put(user18, statuses);
+        returnMe.put(user19, statuses);
+        returnMe.put(user20, statuses);
+        returnMe.put(JacobWest, statuses);
+        returnMe.put(RickyMartin, statuses);
+        returnMe.put(RobertGardner, statuses);
+        returnMe.put(Snowden, statuses);
+        returnMe.put(TristanThompson, statuses);
+        returnMe.put(KCP, statuses);
+        returnMe.put(theMedia, statuses);
+        returnMe.put(Rudy, statuses);
+        returnMe.put(BillBelichick, statuses);
+        returnMe.put(TestUser, statuses);
+        return returnMe;
+    }
 
-        // Here to make a newly registered user have no followers/followees
-        if(!user.getFirstName().equals("Test") || !user.getLastName().equals("User")) {
-            returnMe.put(new User("", "", ""), statusList);
-            return returnMe;
-        }
-
-        statusList = get21Statuses(user);
-
-        returnMe.put(user, statusList);
+    /**
+     * Gets a list of statuses by user to be returned.
+     */
+    private Map<User, List<Status>> initializeStory() {
+        Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
+        List<Status> jacobStatusList = get21Statuses(JacobWest);
+        returnMe.put(JacobWest, jacobStatusList);
+        List<Status> rickyStatusList = get21Statuses(RickyMartin);
+        returnMe.put(RickyMartin, rickyStatusList);
+        List<Status> robertStatusList = get21Statuses(RobertGardner);
+        returnMe.put(RobertGardner, robertStatusList);
+        List<Status> snowdenStatusList = get21Statuses(Snowden);
+        returnMe.put(Snowden, snowdenStatusList);
+        List<Status> tristanStatusList = get21Statuses(TristanThompson);
+        returnMe.put(TristanThompson, tristanStatusList);
+        List<Status> kcpStatusList = get21Statuses(KCP);
+        returnMe.put(KCP, kcpStatusList);
+        List<Status> mediaStatusList = get21Statuses(theMedia);
+        returnMe.put(theMedia, mediaStatusList);
+        List<Status> rudyStatusList = get21Statuses(Rudy);
+        returnMe.put(Rudy, rudyStatusList);
+        List<Status> billStatusList = get21Statuses(BillBelichick);
+        returnMe.put(BillBelichick, billStatusList);
+        List<Status> testStatusList = get21Statuses(TestUser);
+        returnMe.put(TestUser, testStatusList);
+        List<Status> a = get21Statuses(user1);
+        returnMe.put(user1, a);
+        List<Status> b = get21Statuses(user2);
+        returnMe.put(user2, b);
+        List<Status> c = get21Statuses(user3);
+        returnMe.put(user3, c);
+        List<Status> d = get21Statuses(user4);
+        returnMe.put(user4, d);
+        List<Status> e = get21Statuses(user5);
+        returnMe.put(user5, e);
+        List<Status> f = get21Statuses(user6);
+        returnMe.put(user6, f);
+        List<Status> g = get21Statuses(user7);
+        returnMe.put(user7, g);
+        List<Status> h = get21Statuses(user8);
+        returnMe.put(user8, h);
+        List<Status> i = get21Statuses(user9);
+        returnMe.put(user9, i);
+        List<Status> j = get21Statuses(user10);
+        returnMe.put(user10, j);
+        List<Status> k = get21Statuses(user11);
+        returnMe.put(user11, k);
+        List<Status> l = get21Statuses(user12);
+        returnMe.put(user12, l);
+        List<Status> m = get21Statuses(user13);
+        returnMe.put(user13, m);
+        List<Status> n = get21Statuses(user14);
+        returnMe.put(user14, n);
+        List<Status> o = get21Statuses(user15);
+        returnMe.put(user15, o);
+        List<Status> p = get21Statuses(user16);
+        returnMe.put(user16, p);
+        List<Status> q = get21Statuses(user17);
+        returnMe.put(user17, q);
+        List<Status> r = get21Statuses(user18);
+        returnMe.put(user18, r);
+        List<Status> s = get21Statuses(user19);
+        returnMe.put(user19, s);
+        List<Status> t = get21Statuses(user20);
+        returnMe.put(user20, t);
         return returnMe;
     }
 
@@ -932,5 +1071,29 @@ public class ServerFacade {
         }
 
         return followersByFollower;
+    }
+
+    /**
+     * Returns the list of dummy followee data. This is written as a separate method to allow
+     * mocking of the followees.
+     *
+     * @return the generator.
+     */
+    List<User> getDummyFollowees() {
+        return Arrays.asList(user1, user2, theMedia, user4, user5, user6, user7, RickyMartin, RobertGardner, TristanThompson,
+                user8, user9, user10, user11, JacobWest, Snowden, user12, user13, user14, user15, user16, user17, user18, TestUser,
+                user19, user20, BillBelichick, KCP, Rudy, TestUser);
+    }
+
+    /**
+     * Returns the list of dummy followee data. This is written as a separate method to allow
+     * mocking of the followees.
+     *
+     * @return the generator.
+     */
+    List<User> getDummyFollowers() {
+        return Arrays.asList(user3, JacobWest, user1, RickyMartin, user4, RobertGardner, user2, Snowden, user5, user6, user7,
+                user17, user9, user13, user11, user12, user10, user14, user15, user8, user19, TristanThompson, KCP, theMedia, Rudy,
+                user18, user20, BillBelichick, TestUser);
     }
 }

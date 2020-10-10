@@ -31,6 +31,7 @@ public class LoginFragment extends Fragment implements LoginPresenter.View, Logi
 
     private static final String LOG_TAG = "LoginFragment";
     private static final String USER_KEY = "UserKey";
+    private static final String FOLLOW_KEY = "FollowKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
     private User user;
@@ -80,12 +81,6 @@ public class LoginFragment extends Fragment implements LoginPresenter.View, Logi
                     loginToast.show();
                 } else if (!hasAtSymbol(userNameLogin)) {
                     loginToast = Toast.makeText(getActivity(), "Username must have @ symbol" , Toast.LENGTH_LONG);
-                    loginToast.show();
-                } else if(!isRegistered(userNameLogin)) {
-                    loginToast = Toast.makeText(getActivity(), "Username is not registered. Only Username currently registered is '@TestUser')" , Toast.LENGTH_LONG);
-                    loginToast.show();
-                } else if(!isPasswordCorrect(passwordLogin)) {
-                    loginToast = Toast.makeText(getActivity(), "Incorrect password. Correct password is: 'password'" , Toast.LENGTH_LONG);
                     loginToast.show();
                 } else {
                     loginToast = Toast.makeText(getActivity(), "Logging in User", Toast.LENGTH_LONG);
@@ -174,6 +169,7 @@ public class LoginFragment extends Fragment implements LoginPresenter.View, Logi
         Intent intent = new Intent(getActivity(), MainActivity.class);
 
         intent.putExtra(MainActivity.CURRENT_USER_KEY, loginResponse.getUser());
+        intent.putExtra(MainActivity.CURRENT_FOLLOW_KEY, loginResponse.getUser());
         intent.putExtra(MainActivity.AUTH_TOKEN_KEY, loginResponse.getAuthToken());
 
         loginToast.cancel();

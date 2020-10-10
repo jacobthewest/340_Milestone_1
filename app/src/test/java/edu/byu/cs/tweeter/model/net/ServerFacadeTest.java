@@ -15,6 +15,10 @@ import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 
 class ServerFacadeTest {
 
+    private static final String MALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
+    private static final String FEMALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png";
+    private static final String MIKE = "https://i.imgur.com/VZQQiQ1.jpg";
+
     private final User user1 = new User("Daffy", "Duck", "");
     private final User user2 = new User("Fred", "Flintstone", "");
     private final User user3 = new User("Barney", "Rubble", ""); // 2 followees

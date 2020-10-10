@@ -5,10 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-
 
 public class UrlClickableSpan extends ClickableSpan {
 
@@ -25,7 +22,6 @@ public class UrlClickableSpan extends ClickableSpan {
 
     @Override
     public void onClick(@NonNull View widget) {
-        Toast.makeText(this.activity, "You're here", Toast.LENGTH_SHORT).show();
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(this.url));
         activity.startActivity(browserIntent);
     }

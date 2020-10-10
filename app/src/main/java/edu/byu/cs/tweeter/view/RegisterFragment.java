@@ -42,6 +42,7 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
     private static final int RESULT_LOAD_IMAGE = 1;
     private static final String LOG_TAG = "RegisterFragment";
     private static final String USER_KEY = "UserKey";
+    private static final String FOLLOW_KEY = "FollowKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
     private User user;
@@ -183,6 +184,7 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
         Intent intent = new Intent(getActivity(), MainActivity.class);
 
         intent.putExtra(MainActivity.CURRENT_USER_KEY, registerResponse.getUser());
+        intent.putExtra(MainActivity.CURRENT_FOLLOW_KEY, registerResponse.getUser());
         intent.putExtra(MainActivity.AUTH_TOKEN_KEY, registerResponse.getAuthToken());
 
         registerToast.cancel();

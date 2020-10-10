@@ -12,29 +12,32 @@ public class User implements Comparable<User>, Serializable {
     private final String lastName;
     private final String alias;
     private final String imageUrl;
+    private final String password;
     private byte [] imageBytes;
 
-    public User(String firstName, String lastName, String imageURL) {
-        this(firstName, lastName, String.format("@%s%s", firstName, lastName), imageURL);
+    public User(String firstName, String lastName, String imageURL, String password) {
+        this(firstName, lastName, String.format("@%s%s", firstName, lastName), imageURL, password);
     }
 
-    public User(String firstName, String lastName, String imageURL, byte[] imageBytes) {
-        this(firstName, lastName, String.format("@%s%s", firstName, lastName), imageURL, imageBytes);
+    public User(String firstName, String lastName, String imageURL, byte[] imageBytes, String password) {
+        this(firstName, lastName, String.format("@%s%s", firstName, lastName), imageURL, imageBytes, password);
     }
 
-    public User(String firstName, String lastName, String alias, String imageURL) {
+    public User(String firstName, String lastName, String alias, String imageURL, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.alias = alias;
         this.imageUrl = imageURL;
+        this.password = password;
     }
 
-    public User(String firstName, String lastName, String alias, String imageURL, byte[] imageBytes) {
+    public User(String firstName, String lastName, String alias, String imageURL, byte[] imageBytes, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.alias = alias;
         this.imageUrl = imageURL;
         this.imageBytes = imageBytes;
+        this.password = password;
     }
 
     public String getFirstName() {
@@ -55,6 +58,10 @@ public class User implements Comparable<User>, Serializable {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public byte [] getImageBytes() {

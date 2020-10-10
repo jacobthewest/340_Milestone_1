@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.service.request.RetrieveUserRequest;
 import edu.byu.cs.tweeter.model.service.response.RetrieveUserResponse;
 import edu.byu.cs.tweeter.presenter.RetrieveUserPresenter;
@@ -22,14 +23,14 @@ public class AliasClickableSpan extends ClickableSpan implements RetrieveUserPre
 
     private Activity activity;
     private String username;
-    private String password;
+    private AuthToken authToken;
     private RetrieveUserPresenter presenter;
     private Toast toast;
 
-    public AliasClickableSpan(Activity activity, String username, String password) {
+    public AliasClickableSpan(Activity activity, String username, AuthToken authToken) {
         this.activity = activity;
         this.username = username;
-        this.password = password;
+        this.authToken = authToken;
         presenter = new RetrieveUserPresenter(this);
     }
 
@@ -39,7 +40,7 @@ public class AliasClickableSpan extends ClickableSpan implements RetrieveUserPre
 
     @Override
     public void onClick(@NonNull View widget) {
-        RetrieveUserRequest retrieveUserRequest = new RetrieveUserRequest(this.username, this.password);
+        RetrieveUserRequest retrieveUserRequest = new RetrieveUserRequest(this.username);
         RetrieveUserTask retrieveUserTask = new RetrieveUserTask(presenter, getObserver());
 
         retrieveUserTask.execute(retrieveUserRequest);
@@ -50,7 +51,7 @@ public class AliasClickableSpan extends ClickableSpan implements RetrieveUserPre
         Intent intent = new Intent(this.activity, MainActivity.class);
 
         intent.putExtra(MainActivity.CURRENT_USER_KEY, retrieveUserResponse.getUser());
-        intent.putExtra(MainActivity.AUTH_TOKEN_KEY, retrieveUserResponse.getAuthToken());
+        intent.putExtra(MainActivity.AUTH_TOKEN_KEY, this.authToken);
 
         this.activity.startActivity(intent);
     }

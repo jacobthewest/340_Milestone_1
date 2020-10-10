@@ -31,25 +31,27 @@ class MainSectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int[] TAB_TITLES = new int[]{R.string.feedTabTitle, R.string.storyTabTitle, R.string.followingTabTitle, R.string.followersTabTitle};
     private final Context mContext;
     private final User user;
+    private final User followUser;
     private final AuthToken authToken;
 
-    public MainSectionsPagerAdapter(Context context, FragmentManager fm, User user, AuthToken authToken) {
+    public MainSectionsPagerAdapter(Context context, FragmentManager fm, User user, User followUser, AuthToken authToken) {
         super(fm);
         mContext = context;
         this.user = user;
+        this.followUser = followUser;
         this.authToken = authToken;
     }
 
     @Override
     public Fragment getItem(int position) {
         if (position == FEED_FRAGMENT_POSITION) {
-            return FeedFragment.newInstance(user, authToken);
+            return FeedFragment.newInstance(user, followUser, authToken);
         } else if (position == STORY_FRAGMENT_POSITION) {
-            return StoryFragment.newInstance(user, authToken);
+            return StoryFragment.newInstance(user, followUser, authToken);
         } else if (position == FOLLOWING_FRAGMENT_POSITION) {
-            return FollowingFragment.newInstance(user, authToken);
+            return FollowingFragment.newInstance(user, followUser, authToken);
         } else if (position == FOLLOWERS_FRAGMENT_POSITION) {
-            return FollowersFragment.newInstance(user, authToken);
+            return FollowersFragment.newInstance(user, followUser, authToken);
         } else {
             return MainPlaceholderFragment.newInstance(position + 1);
         }
