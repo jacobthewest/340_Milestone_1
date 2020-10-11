@@ -124,7 +124,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new AliasClickableSpan(getActivity(), user, follower_username.getText().toString(), authToken).onClick(view);
+                    new AliasClickableSpan(getActivity(), user, followerAlias.getText().toString(), authToken).onClick(view);
                 }
             });
         }

@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -88,7 +89,7 @@ public class ServerFacade {
 
 
     public UpdateFollowResponse updateFollow(UpdateFollowRequest request) {
-        List<User> following = getDummyFollowees();
+        List<User> following = new LinkedList<>(getDummyFollowees());
 
         if(request.followTheFollowUser()) { // Then follow the followUser
             if(!following.contains(request.getFollowUser())) {

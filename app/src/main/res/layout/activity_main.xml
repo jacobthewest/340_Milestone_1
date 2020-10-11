@@ -98,12 +98,11 @@
 
             <Button
                 android:id="@+id/followButton"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:layout_width="200dp"
-                android:layout_toEndOf="@+id/mainActivityLinearLayout"
-                android:layout_marginLeft="20dp"
                 android:layout_centerVertical="true"
-                />
+                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/mainActivityLinearLayout" />
 
         </RelativeLayout>
 

@@ -19,18 +19,18 @@ class ServerFacadeTest {
     private static final String FEMALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png";
     private static final String MIKE = "https://i.imgur.com/VZQQiQ1.jpg";
 
-    private final User user1 = new User("Daffy", "Duck", "");
-    private final User user2 = new User("Fred", "Flintstone", "");
-    private final User user3 = new User("Barney", "Rubble", ""); // 2 followees
-    private final User user4 = new User("Wilma", "Rubble", "");
-    private final User user5 = new User("Clint", "Eastwood", ""); // 6 followees
-    private final User user6 = new User("Mother", "Teresa", ""); // 7 followees
-    private final User user7 = new User("Harriett", "Hansen", "");
-    private final User user8 = new User("Zoe", "Zabriski", "");
-    private final User user9 = new User("Albert", "Awesome", ""); // 1  followee
-    private final User user10 = new User("Star", "Student", "");
-    private final User user11 = new User("Bo", "Bungle", "");
-    private final User user12 = new User("Susie", "Sampson", "");
+    private final User user1 = new User("Daffy", "Duck", "", "password");
+    private final User user2 = new User("Fred", "Flintstone", "", "password");
+    private final User user3 = new User("Barney", "Rubble", "", "password"); // 2 followees
+    private final User user4 = new User("Wilma", "Rubble", "", "password");
+    private final User user5 = new User("Clint", "Eastwood", "", "password"); // 6 followees
+    private final User user6 = new User("Mother", "Teresa", "", "password"); // 7 followees
+    private final User user7 = new User("Harriett", "Hansen", "", "password");
+    private final User user8 = new User("Zoe", "Zabriski", "", "password");
+    private final User user9 = new User("Albert", "Awesome", "", "password"); // 1  followee
+    private final User user10 = new User("Star", "Student", "", "password");
+    private final User user11 = new User("Bo", "Bungle", "", "password");
+    private final User user12 = new User("Susie", "Sampson", "", "password");
 
     private final Follow follow1 = new Follow(user9, user5);
 

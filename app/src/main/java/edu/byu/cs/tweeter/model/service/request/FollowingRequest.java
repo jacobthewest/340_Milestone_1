@@ -27,11 +27,6 @@ public class FollowingRequest {
         this.lastFollowee = lastFollowee;
     }
 
-    public FollowingRequest(User user, int limit) {
-        this.user = user;
-        this.limit = limit;
-    }
-
     /**
      * Returns the follower whose followees are to be returned by this request.
      *
