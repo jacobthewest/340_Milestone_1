@@ -13,7 +13,7 @@ public class CountPresenter {
     /**
      * The interface by which this presenter communicates with it's view.
      */
-    public interface View {
+    public interface View { 
         // If needed, specify methods here that will be called on the view in response to model updates
     }
 
