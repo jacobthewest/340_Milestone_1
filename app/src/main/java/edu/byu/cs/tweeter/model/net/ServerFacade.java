@@ -1,13 +1,8 @@
 package edu.byu.cs.tweeter.model.net;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Array;
-import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import edu.byu.cs.tweeter.BuildConfig;
-import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -87,17 +81,26 @@ public class ServerFacade {
     private final User BillBelichick = new User("Bill", "Belichick", "@BillBelichick", MIKE, "password");
     private final User TestUser = new User("Test", "User", "@TestUser", MALE_IMAGE_URL, "password");
 
-
     public UpdateFollowResponse updateFollow(UpdateFollowRequest request) {
         List<User> following = new LinkedList<>(getDummyFollowees());
+        User user = request.getUser();
+        User followUser = request.getFollowUser();
+
+        if(user == null || followUser == null) {
+            throw new AssertionError();
+        }
 
         if(request.followTheFollowUser()) { // Then follow the followUser
             if(!following.contains(request.getFollowUser())) {
                 following.add(request.getFollowUser());
+            } else {
+                throw new AssertionError();
             }
         } else { // Unfollow the followUser
             if(following.contains(request.getFollowUser())) {
                 following.remove(request.getFollowUser());
+            } else {
+                throw new AssertionError();
             }
         }
         return new UpdateFollowResponse(request.getUser(), request.getFollowUser(), following);
@@ -105,6 +108,9 @@ public class ServerFacade {
 
 
     public CountResponse getCount(CountRequest request) {
+        if(request.getUser() == null) {
+            throw new AssertionError();
+        }
         int followingCount = (getDummyFollowees().size());
         int followersCount = (getDummyFollowers().size());
         return new CountResponse(request.getUser(), followingCount, followersCount);
@@ -117,6 +123,17 @@ public class ServerFacade {
      * @return the submit tweet response.
      */
     public SubmitTweetResponse submitTweet(SubmitTweetRequest request) {
+        String userAlias = request.getUser().getAlias();
+        String statusAlias = request.getStatus().getUser().getAlias();
+        if(request.getStatus() == null) {
+            throw new AssertionError();
+        }
+        if(request.getUser() == null) {
+            throw new AssertionError();
+        }
+        if(!userAlias.equals(statusAlias)) {
+            throw new AssertionError();
+        }
         return new SubmitTweetResponse(request.getUser(), request.getStatus());
     }
 
@@ -130,6 +147,15 @@ public class ServerFacade {
      */
     public LoginResponse login(LoginRequest request) {
         //"https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+        if(request.getUsername().equals("") || request.getUsername() == null) {
+            throw new AssertionError();
+        }
+        if(!request.getUsername().contains("@")) {
+            throw new AssertionError();
+        }
+        if(request.getPassword().equals("") || request.getPassword() == null) {
+            throw new AssertionError();
+        }
         User user = new User("Test", "User", "https://i.imgur.com/VZQQiQ1.jpg", "password");
         return new LoginResponse(user, new AuthToken(user.getAlias()));
     }
@@ -143,6 +169,11 @@ public class ServerFacade {
      * @return the login response.
      */
     public RetrieveUserResponse retrieveUser(RetrieveUserRequest request) {
+
+        if(request.getUsername().equals("") || request.getUsername() == null) {
+            throw new AssertionError();
+        }
+
         if (request.getUsername().equals(user1.getAlias())) {
             return new RetrieveUserResponse(user1);
         } else if (request.getUsername().equals(user2.getAlias())) {
@@ -204,7 +235,7 @@ public class ServerFacade {
         } else if (request.getUsername().equals(TestUser.getAlias())) {
             return new RetrieveUserResponse(TestUser);
         } else {
-            return null;
+            throw new AssertionError(); // Username is not recognized for us.
         }
     }
 
@@ -242,7 +273,25 @@ public class ServerFacade {
      * @return the register response.
      */
     public RegisterResponse register(RegisterRequest request) {
-        User user = new User(request.getFirstName(), request.getLastName(), request.getImageUrl(), request.getImageBytes(), request.getPassword());
+        if(request.getUsername().equals("") || request.getUsername() == null) {
+            throw new AssertionError();
+        }
+        if(request.getPassword().equals("") || request.getPassword() == null) {
+            throw new AssertionError();
+        }
+        if(request.getFirstName().equals("") || request.getFirstName() == null) {
+            throw new AssertionError();
+        }
+        if(request.getLastName().equals("") || request.getLastName() == null) {
+            throw new AssertionError();
+        }
+        if(request.getImageUrl().equals("") || request.getImageUrl() == null) {
+            throw new AssertionError();
+        }
+        if(request.getImageBytes().equals("") || request.getImageBytes() == null) {
+            throw new AssertionError();
+        }
+        User user = new User(request.getFirstName(), request.getLastName(), request.getUsername(), request.getImageUrl(), request.getImageBytes(), request.getPassword());
         return new RegisterResponse(user, new AuthToken(user.getAlias()));
     }
 
@@ -524,9 +573,8 @@ public class ServerFacade {
     }
 
 
-    private List<Status> get21Statuses(User definedUser) {
+    public List<Status> get21Statuses(User definedUser) {
         List<Status> feed = new ArrayList<>();
-        String imageURL = "https://i.imgur.com/VZQQiQ1.jpg";
 
         if(definedUser == null) {
             // --------------------- 1--------------------- //
@@ -1082,9 +1130,9 @@ public class ServerFacade {
      *
      * @return the generator.
      */
-    List<User> getDummyFollowees() {
+    public List<User> getDummyFollowees() {
         return Arrays.asList(user1, user2, theMedia, user4, user5, user6, user7, RickyMartin, RobertGardner, TristanThompson,
-                user8, user9, user10, user11, JacobWest, Snowden, user12, user13, user14, user15, user16, user17, user18, TestUser,
+                user8, user9, user10, user11, Snowden, user12, user13, user14, user15, user16, user17, user18, TestUser,
                 user19, user20, BillBelichick, KCP, Rudy, TestUser);
     }
 
