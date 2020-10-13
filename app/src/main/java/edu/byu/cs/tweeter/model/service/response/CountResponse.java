@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.model.service.response;
 
+import java.util.Objects;
+
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class CountResponse extends Response {
@@ -34,5 +36,20 @@ public class CountResponse extends Response {
 
     public int getFollowersCount() {
         return followersCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CountResponse that = (CountResponse) o;
+        return followingCount == that.followingCount &&
+                followersCount == that.followersCount &&
+                Objects.equals(user, that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, followingCount, followersCount);
     }
 }

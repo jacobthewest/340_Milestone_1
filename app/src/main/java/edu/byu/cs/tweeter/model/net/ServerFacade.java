@@ -42,8 +42,9 @@ import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
  * this class.
  */
 public class ServerFacade {
-    private static Map<User, List<Status>> storyStatusesByUser;
-    private static Map<User, List<Status>> feedStatusesByUser;
+    private static Map<String, List<Status>> storyStatusesByUser;
+    private static Map<String, List<Status>> feedStatusesByUser;
+    private List<User> dummyFollowees;
 
     // This is the hard coded followee data returned by the 'getFollowees()' method
     private static final String MALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
@@ -82,7 +83,9 @@ public class ServerFacade {
     private final User TestUser = new User("Test", "User", "@TestUser", MALE_IMAGE_URL, "password");
 
     public UpdateFollowResponse updateFollow(UpdateFollowRequest request) {
-        List<User> following = new LinkedList<>(getDummyFollowees());
+        if(this.dummyFollowees == null) {
+            dummyFollowees = new ArrayList<>(getDummyFollowees());
+        }
         User user = request.getUser();
         User followUser = request.getFollowUser();
 
@@ -91,27 +94,21 @@ public class ServerFacade {
         }
 
         if(request.followTheFollowUser()) { // Then follow the followUser
-            if(!following.contains(request.getFollowUser())) {
-                following.add(request.getFollowUser());
-            } else {
-                throw new AssertionError();
-            }
+            dummyFollowees.add(request.getFollowUser());
         } else { // Unfollow the followUser
-            if(following.contains(request.getFollowUser())) {
-                following.remove(request.getFollowUser());
-            } else {
-                throw new AssertionError();
-            }
+            dummyFollowees.remove(request.getFollowUser());
         }
-        return new UpdateFollowResponse(request.getUser(), request.getFollowUser(), following);
+        return new UpdateFollowResponse(request.getUser(), request.getFollowUser(), dummyFollowees);
     }
-
 
     public CountResponse getCount(CountRequest request) {
         if(request.getUser() == null) {
             throw new AssertionError();
         }
-        int followingCount = (getDummyFollowees().size());
+        if(this.dummyFollowees == null) {
+            this.dummyFollowees = new ArrayList<>(getDummyFollowees());
+        }
+        int followingCount = (this.dummyFollowees.size());
         int followersCount = (getDummyFollowers().size());
         return new CountResponse(request.getUser(), followingCount, followersCount);
     }
@@ -497,7 +494,7 @@ public class ServerFacade {
             storyStatusesByUser = initializeStory();
         }
 
-        List<Status> allStatuses = storyStatusesByUser.get(request.getUser());
+        List<Status> allStatuses = storyStatusesByUser.get(request.getUser().getAlias());
         List<Status> responseStatuses = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -548,7 +545,7 @@ public class ServerFacade {
             feedStatusesByUser = initializeFeed();
         }
 
-        List<Status> allStatuses = feedStatusesByUser.get(request.getUser());
+        List<Status> allStatuses = feedStatusesByUser.get(request.getUser().getAlias());
         List<Status> responseStatuses = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -929,107 +926,107 @@ public class ServerFacade {
     /**
      * Gets a list of statuses by user to be returned.
      */
-    private Map<User, List<Status>> initializeFeed() {
-        Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
+    private Map<String, List<Status>> initializeFeed() {
+        Map<String, List<Status>> returnMe = new HashMap<String, List<Status>>();
         List<Status> statuses = get21Statuses(null);
-        returnMe.put(user1, statuses);
-        returnMe.put(user2, statuses);
-        returnMe.put(user3, statuses);
-        returnMe.put(user4, statuses);
-        returnMe.put(user5, statuses);
-        returnMe.put(user6, statuses);
-        returnMe.put(user7, statuses);
-        returnMe.put(user8, statuses);
-        returnMe.put(user9, statuses);
-        returnMe.put(user10, statuses);
-        returnMe.put(user11, statuses);
-        returnMe.put(user12, statuses);
-        returnMe.put(user13, statuses);
-        returnMe.put(user14, statuses);
-        returnMe.put(user15, statuses);
-        returnMe.put(user16, statuses);
-        returnMe.put(user17, statuses);
-        returnMe.put(user18, statuses);
-        returnMe.put(user19, statuses);
-        returnMe.put(user20, statuses);
-        returnMe.put(JacobWest, statuses);
-        returnMe.put(RickyMartin, statuses);
-        returnMe.put(RobertGardner, statuses);
-        returnMe.put(Snowden, statuses);
-        returnMe.put(TristanThompson, statuses);
-        returnMe.put(KCP, statuses);
-        returnMe.put(theMedia, statuses);
-        returnMe.put(Rudy, statuses);
-        returnMe.put(BillBelichick, statuses);
-        returnMe.put(TestUser, statuses);
+        returnMe.put(user1.getAlias(), statuses);
+        returnMe.put(user2.getAlias(), statuses);
+        returnMe.put(user3.getAlias(), statuses);
+        returnMe.put(user4.getAlias(), statuses);
+        returnMe.put(user5.getAlias(), statuses);
+        returnMe.put(user6.getAlias(), statuses);
+        returnMe.put(user7.getAlias(), statuses);
+        returnMe.put(user8.getAlias(), statuses);
+        returnMe.put(user9.getAlias(), statuses);
+        returnMe.put(user10.getAlias(), statuses);
+        returnMe.put(user11.getAlias(), statuses);
+        returnMe.put(user12.getAlias(), statuses);
+        returnMe.put(user13.getAlias(), statuses);
+        returnMe.put(user14.getAlias(), statuses);
+        returnMe.put(user15.getAlias(), statuses);
+        returnMe.put(user16.getAlias(), statuses);
+        returnMe.put(user17.getAlias(), statuses);
+        returnMe.put(user18.getAlias(), statuses);
+        returnMe.put(user19.getAlias(), statuses);
+        returnMe.put(user20.getAlias(), statuses);
+        returnMe.put(JacobWest.getAlias(), statuses);
+        returnMe.put(RickyMartin.getAlias(), statuses);
+        returnMe.put(RobertGardner.getAlias(), statuses);
+        returnMe.put(Snowden.getAlias(), statuses);
+        returnMe.put(TristanThompson.getAlias(), statuses);
+        returnMe.put(KCP.getAlias(), statuses);
+        returnMe.put(theMedia.getAlias(), statuses);
+        returnMe.put(Rudy.getAlias(), statuses);
+        returnMe.put(BillBelichick.getAlias(), statuses);
+        returnMe.put(TestUser.getAlias(), statuses);
         return returnMe;
     }
 
     /**
      * Gets a list of statuses by user to be returned.
      */
-    private Map<User, List<Status>> initializeStory() {
-        Map<User, List<Status>> returnMe = new HashMap<User, List<Status>>();
+    private Map<String, List<Status>> initializeStory() {
+        Map<String, List<Status>> returnMe = new HashMap<String, List<Status>>();
         List<Status> jacobStatusList = get21Statuses(JacobWest);
-        returnMe.put(JacobWest, jacobStatusList);
+        returnMe.put(JacobWest.getAlias(), jacobStatusList);
         List<Status> rickyStatusList = get21Statuses(RickyMartin);
-        returnMe.put(RickyMartin, rickyStatusList);
+        returnMe.put(RickyMartin.getAlias(), rickyStatusList);
         List<Status> robertStatusList = get21Statuses(RobertGardner);
-        returnMe.put(RobertGardner, robertStatusList);
+        returnMe.put(RobertGardner.getAlias(), robertStatusList);
         List<Status> snowdenStatusList = get21Statuses(Snowden);
-        returnMe.put(Snowden, snowdenStatusList);
+        returnMe.put(Snowden.getAlias(), snowdenStatusList);
         List<Status> tristanStatusList = get21Statuses(TristanThompson);
-        returnMe.put(TristanThompson, tristanStatusList);
+        returnMe.put(TristanThompson.getAlias(), tristanStatusList);
         List<Status> kcpStatusList = get21Statuses(KCP);
-        returnMe.put(KCP, kcpStatusList);
+        returnMe.put(KCP.getAlias(), kcpStatusList);
         List<Status> mediaStatusList = get21Statuses(theMedia);
-        returnMe.put(theMedia, mediaStatusList);
+        returnMe.put(theMedia.getAlias(), mediaStatusList);
         List<Status> rudyStatusList = get21Statuses(Rudy);
-        returnMe.put(Rudy, rudyStatusList);
+        returnMe.put(Rudy.getAlias(), rudyStatusList);
         List<Status> billStatusList = get21Statuses(BillBelichick);
-        returnMe.put(BillBelichick, billStatusList);
+        returnMe.put(BillBelichick.getAlias(), billStatusList);
         List<Status> testStatusList = get21Statuses(TestUser);
-        returnMe.put(TestUser, testStatusList);
+        returnMe.put(TestUser.getAlias(), testStatusList);
         List<Status> a = get21Statuses(user1);
-        returnMe.put(user1, a);
+        returnMe.put(user1.getAlias(), a);
         List<Status> b = get21Statuses(user2);
-        returnMe.put(user2, b);
+        returnMe.put(user2.getAlias(), b);
         List<Status> c = get21Statuses(user3);
-        returnMe.put(user3, c);
+        returnMe.put(user3.getAlias(), c);
         List<Status> d = get21Statuses(user4);
-        returnMe.put(user4, d);
+        returnMe.put(user4.getAlias(), d);
         List<Status> e = get21Statuses(user5);
-        returnMe.put(user5, e);
+        returnMe.put(user5.getAlias(), e);
         List<Status> f = get21Statuses(user6);
-        returnMe.put(user6, f);
+        returnMe.put(user6.getAlias(), f);
         List<Status> g = get21Statuses(user7);
-        returnMe.put(user7, g);
+        returnMe.put(user7.getAlias(), g);
         List<Status> h = get21Statuses(user8);
-        returnMe.put(user8, h);
+        returnMe.put(user8.getAlias(), h);
         List<Status> i = get21Statuses(user9);
-        returnMe.put(user9, i);
+        returnMe.put(user9.getAlias(), i);
         List<Status> j = get21Statuses(user10);
-        returnMe.put(user10, j);
+        returnMe.put(user10.getAlias(), j);
         List<Status> k = get21Statuses(user11);
-        returnMe.put(user11, k);
+        returnMe.put(user11.getAlias(), k);
         List<Status> l = get21Statuses(user12);
-        returnMe.put(user12, l);
+        returnMe.put(user12.getAlias(), l);
         List<Status> m = get21Statuses(user13);
-        returnMe.put(user13, m);
+        returnMe.put(user13.getAlias(), m);
         List<Status> n = get21Statuses(user14);
-        returnMe.put(user14, n);
+        returnMe.put(user14.getAlias(), n);
         List<Status> o = get21Statuses(user15);
-        returnMe.put(user15, o);
+        returnMe.put(user15.getAlias(), o);
         List<Status> p = get21Statuses(user16);
-        returnMe.put(user16, p);
+        returnMe.put(user16.getAlias(), p);
         List<Status> q = get21Statuses(user17);
-        returnMe.put(user17, q);
+        returnMe.put(user17.getAlias(), q);
         List<Status> r = get21Statuses(user18);
-        returnMe.put(user18, r);
+        returnMe.put(user18.getAlias(), r);
         List<Status> s = get21Statuses(user19);
-        returnMe.put(user19, s);
+        returnMe.put(user19.getAlias(), s);
         List<Status> t = get21Statuses(user20);
-        returnMe.put(user20, t);
+        returnMe.put(user20.getAlias(), t);
         return returnMe;
     }
 

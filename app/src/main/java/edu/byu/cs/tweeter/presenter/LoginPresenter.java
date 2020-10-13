@@ -2,6 +2,7 @@ package edu.byu.cs.tweeter.presenter;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.model.service.CountService;
 import edu.byu.cs.tweeter.model.service.LoginService;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
 import edu.byu.cs.tweeter.model.service.response.LoginResponse;
@@ -37,5 +38,9 @@ public class LoginPresenter {
     public LoginResponse login(LoginRequest loginRequest) throws IOException {
         LoginService loginService = new LoginService();
         return loginService.login(loginRequest);
+    }
+
+    public LoginService getLoginService() {
+        return new LoginService();
     }
 }

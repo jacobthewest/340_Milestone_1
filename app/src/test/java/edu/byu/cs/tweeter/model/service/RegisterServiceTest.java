@@ -69,19 +69,19 @@ public class RegisterServiceTest {
     }
 
     @Test
-    public void testLogin_validRequest_correctResponse() throws IOException {
+    public void testRegister_validRequest_correctResponse() throws IOException {
         RegisterResponse response = registerServiceSpy.getRegister(validRequest);
         Assertions.assertEquals(successResponse, response);
     }
 
     @Test
-    public void testGetCount_invalidRequest_emptyImageBytes() throws IOException {
+    public void testRegister_invalidRequest_emptyImageBytes() throws IOException {
         RegisterResponse response = registerServiceSpy.getRegister(invalidRequestOne);
         Assertions.assertEquals(failureResponse, response);
     }
 
     @Test
-    public void testGetCount_invalidRequest_usernameDoesNotMatchWithAuthToken() throws IOException {
+    public void testRegister_invalidRequest_usernameDoesNotMatchWithAuthToken() throws IOException {
         RegisterResponse response = registerServiceSpy.getRegister(invalidRequestTwo);
         Assertions.assertEquals(failureResponse, response);
     }

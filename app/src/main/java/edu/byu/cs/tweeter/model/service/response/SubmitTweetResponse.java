@@ -2,6 +2,7 @@ package edu.byu.cs.tweeter.model.service.response;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -52,5 +53,27 @@ public class SubmitTweetResponse extends Response {
      */
     public Status getStatus() {
         return status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubmitTweetResponse that = (SubmitTweetResponse) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(status, that.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, status);
+    }
+
+    @Override
+    public String toString() {
+        return "SubmitTweetResponse{" +
+                "user=" + user +
+                ", status=" + status +
+                '}';
     }
 }

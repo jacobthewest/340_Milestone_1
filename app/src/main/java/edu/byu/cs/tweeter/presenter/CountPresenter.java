@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.presenter;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.service.CountService;
+import edu.byu.cs.tweeter.model.service.FollowersService;
 import edu.byu.cs.tweeter.model.service.request.CountRequest;
 import edu.byu.cs.tweeter.model.service.response.CountResponse;
 
@@ -34,5 +35,9 @@ public class CountPresenter {
     public CountResponse getCount(CountRequest countRequest) throws IOException {
         CountService countService = new CountService();
         return countService.getCount(countRequest);
+    }
+
+    public CountService getCountService() {
+        return new CountService();
     }
 }

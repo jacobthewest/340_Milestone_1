@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.presenter;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.service.UpdateFollowService;
+import edu.byu.cs.tweeter.model.service.UpdateFollowService;
 import edu.byu.cs.tweeter.model.service.request.UpdateFollowRequest;
 import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
 
@@ -34,5 +35,9 @@ public class UpdateFollowPresenter {
     public UpdateFollowResponse getUpdateFollow(UpdateFollowRequest updateFollowRequest) throws IOException {
         UpdateFollowService updateFollowService = new UpdateFollowService();
         return updateFollowService.updateFollow(updateFollowRequest);
+    }
+
+    public UpdateFollowService getUpdateFollowService() {
+        return new UpdateFollowService();
     }
 }

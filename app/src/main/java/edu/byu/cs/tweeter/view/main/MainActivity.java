@@ -34,6 +34,7 @@ import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
 import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
 import edu.byu.cs.tweeter.presenter.CountPresenter;
 import edu.byu.cs.tweeter.presenter.FollowingPresenter;
+import edu.byu.cs.tweeter.presenter.LogoutPresenter;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
 import edu.byu.cs.tweeter.presenter.UpdateFollowPresenter;
 import edu.byu.cs.tweeter.view.HomeActivity;
@@ -47,7 +48,7 @@ import edu.byu.cs.tweeter.view.util.ImageUtils;
 /**
  * The main activity for the application. Contains tabs for feed, story, following, and followers.
  */
-public class MainActivity extends AppCompatActivity implements MainPresenter.View, LogoutTask.Observer, CountPresenter.View, CountTask.Observer,
+public class MainActivity extends AppCompatActivity implements LogoutPresenter.View, LogoutTask.Observer, CountPresenter.View, CountTask.Observer,
         UpdateFollowPresenter.View, UpdateFollowTask.Observer, FollowingPresenter.View, GetFollowingTask.Observer {
 
     public static final String CURRENT_USER_KEY = "CurrentUser";
@@ -58,10 +59,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
     private User followUser;
     private AuthToken authToken;
     private List<User> following;
-    private MainPresenter mainPresenter;
     private CountPresenter countPresenter;
     private UpdateFollowPresenter updateFollowPresenter;
     private FollowingPresenter followingPresenter;
+    private LogoutPresenter logoutPresenter;
     private FragmentTransaction fragmentTransaction;
     private DialogFragment dialogFragment;
     private Button logoutButton;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
             @Override
             public void onClick(View v) {
                 LogoutRequest logoutRequest = getLogoutRequest();
-                LogoutTask logoutTask = new LogoutTask(getMainPresenter(), getLogoutObserver());
+                LogoutTask logoutTask = new LogoutTask(getLogoutPresenter(), getLogoutObserver());
                 logoutTask.execute(logoutRequest);
             }
         });
@@ -155,10 +156,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
     }
 
     private void setPresenters() {
-        mainPresenter = new MainPresenter(this);
         countPresenter = new CountPresenter(this);
         updateFollowPresenter = new UpdateFollowPresenter(this);
         followingPresenter = new FollowingPresenter(this);
+        logoutPresenter = new LogoutPresenter(this);
     }
 
     private void setButtons() {
@@ -177,10 +178,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         }
     }
 
-    public MainPresenter getMainPresenter() {
-        return this.mainPresenter;
-    }
-
     public CountPresenter getCountPresenter() {
         return this.countPresenter;
     }
@@ -191,6 +188,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
 
     public FollowingPresenter getFollowPresenter() {
         return this.followingPresenter;
+    }
+
+    public LogoutPresenter getLogoutPresenter() {
+        return this.logoutPresenter;
     }
 
     public void setCount() {

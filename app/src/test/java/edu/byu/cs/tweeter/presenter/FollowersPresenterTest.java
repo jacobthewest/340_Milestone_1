@@ -36,7 +36,6 @@ public class FollowersPresenterTest {
 
         // Create a mock FollowersService
         mockFollowersService = Mockito.mock(FollowersService.class);
-        Mockito.when(mockFollowersService.getFollowers(request)).thenReturn(response);
 
         // Wrap a FollowersPresenter in a spy that will use the mock service.
         presenter = Mockito.spy(new FollowersPresenter(new FollowersPresenter.View() {}));

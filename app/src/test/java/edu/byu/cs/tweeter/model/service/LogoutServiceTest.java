@@ -56,13 +56,13 @@ public class LogoutServiceTest {
     }
 
     @Test
-    public void testGetCount_invalidRequest_emptyUsername() throws IOException {
+    public void testLogout_invalidRequest_emptyUsername() throws IOException {
         LogoutResponse response = logoutServiceSpy.logout(invalidRequestOne);
         Assertions.assertEquals(failureResponse, response);
     }
 
     @Test
-    public void testGetCount_invalidRequest_authTokenDoesNotMatch() throws IOException {
+    public void testLogout_invalidRequest_authTokenDoesNotMatch() throws IOException {
         LogoutResponse response = logoutServiceSpy.logout(invalidRequestTwo);
         Assertions.assertEquals(failureResponse, response);
     }

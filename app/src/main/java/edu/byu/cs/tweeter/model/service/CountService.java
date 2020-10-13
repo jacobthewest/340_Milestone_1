@@ -10,7 +10,7 @@ import edu.byu.cs.tweeter.util.ByteArrayUtils;
 
 public class CountService {
 
-    public CountResponse getCount(CountRequest request) throws IOException {
+    public CountResponse getCount(CountRequest request) {
         ServerFacade serverFacade = getServerFacade();
         CountResponse countResponse = serverFacade.getCount(request);
 

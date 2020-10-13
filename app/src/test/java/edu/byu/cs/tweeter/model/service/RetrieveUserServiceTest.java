@@ -57,25 +57,25 @@ public class RetrieveUserServiceTest {
     }
 
     @Test
-    public void testGetRetrieveUser_validRequest_correctResponse() throws IOException {
+    public void testRetrieveUser_validRequest_correctResponse() throws IOException {
         RetrieveUserResponse response = retrieveUserServiceSpy.retrieveUser(validRequest);
         Assertions.assertEquals(successResponse, response);
     }
 
     @Test
-    public void testGetFollowers_invalidRequest_usernameNotRegistered() throws IOException {
+    public void testRetrieveUser_invalidRequest_usernameNotRegistered() throws IOException {
         RetrieveUserResponse response = retrieveUserServiceSpy.retrieveUser(invalidRequestOne);
         Assertions.assertEquals(failureResponse, response);
     }
 
     @Test
-    public void testGetFollowers_invalidRequest_usernameIsNull() throws IOException {
+    public void testRetrieveUser_invalidRequest_usernameIsNull() throws IOException {
         RetrieveUserResponse response = retrieveUserServiceSpy.retrieveUser(invalidRequestTwo);
         Assertions.assertEquals(failureResponse, response);
     }
 
     @Test
-    public void testGetFollowers_invalidRequest_usernameIsEmpty() throws IOException {
+    public void testRetrieveUser_invalidRequest_usernameIsEmpty() throws IOException {
         RetrieveUserResponse response = retrieveUserServiceSpy.retrieveUser(invalidRequestThree);
         Assertions.assertEquals(failureResponse, response);
     }

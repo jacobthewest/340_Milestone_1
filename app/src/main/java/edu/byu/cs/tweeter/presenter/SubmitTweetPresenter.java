@@ -2,6 +2,7 @@ package edu.byu.cs.tweeter.presenter;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.model.service.SubmitTweetService;
 import edu.byu.cs.tweeter.model.service.LoginService;
 import edu.byu.cs.tweeter.model.service.SubmitTweetService;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
@@ -40,5 +41,9 @@ public class SubmitTweetPresenter {
     public SubmitTweetResponse submitTweet(SubmitTweetRequest submitTweetRequest) throws IOException {
         SubmitTweetService submitTweetService = new SubmitTweetService();
         return submitTweetService.submitTweet(submitTweetRequest);
+    }
+
+    public SubmitTweetService getSubmitTweetService() {
+        return new SubmitTweetService();
     }
 }

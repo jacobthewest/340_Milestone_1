@@ -13,7 +13,7 @@ import edu.byu.cs.tweeter.util.ByteArrayUtils;
  */
 public class LogoutService {
 
-    public LogoutResponse logout(LogoutRequest request) throws IOException {
+    public LogoutResponse logout(LogoutRequest request) {
         ServerFacade serverFacade = getServerFacade();
         LogoutResponse logoutResponse = serverFacade.logout(request);
 

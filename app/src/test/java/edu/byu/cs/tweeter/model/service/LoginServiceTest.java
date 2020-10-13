@@ -55,13 +55,13 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void testGetCount_invalidRequest_emptyUsername() throws IOException {
+    public void testLogin_invalidRequest_emptyUsername() throws IOException {
         LoginResponse response = loginServiceSpy.login(invalidRequestOne);
         Assertions.assertEquals(failureResponse, response);
     }
 
     @Test
-    public void testGetCount_invalidRequest_emptyAuthToken() throws IOException {
+    public void testLogin_invalidRequest_emptyAuthToken() throws IOException {
         LoginResponse response = loginServiceSpy.login(invalidRequestTwo);
         Assertions.assertEquals(failureResponse, response);
     }

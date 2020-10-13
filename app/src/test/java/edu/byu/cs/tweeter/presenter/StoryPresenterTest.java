@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.model.service;
+package edu.byu.cs.tweeter.presenter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,18 +14,17 @@ import java.util.List;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.service.StoryService;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
-import edu.byu.cs.tweeter.util.ByteArrayUtils;
 
-public class StoryServiceTest {
+public class StoryPresenterTest {
     private StoryRequest validRequest;
-    private StoryRequest invalidRequestOne;
-    private StoryRequest invalidRequestTwo;
     private StoryResponse successResponse;
-    private StoryResponse failureResponse;
-    private StoryService storyServiceSpy;
+        private StoryService mockStoryService;
+    private StoryPresenter presenter;
     private static final String MALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
+
 
     @BeforeEach
     public void setup() {
@@ -35,49 +34,34 @@ public class StoryServiceTest {
 
         // Setup request objects to use in the tests
         validRequest = new StoryRequest(currentUser, 5, null);
-        invalidRequestOne = new StoryRequest(null, 5, null);
-        invalidRequestTwo = new StoryRequest(currentUser, -1, null);
 
         // Setup a mock ServerFacade that will return known responses
         successResponse = new StoryResponse(story, false);
-        Mockito.when(mockServerFacade.getStory(validRequest)).thenReturn(successResponse);
 
-        failureResponse = new StoryResponse("An exception occured");
-        Mockito.when(mockServerFacade.getStory(invalidRequestOne)).thenReturn(failureResponse);
-        Mockito.when(mockServerFacade.getStory(invalidRequestTwo)).thenReturn(failureResponse);
+        // Create a mock FollowersService
+        mockStoryService = Mockito.mock(StoryService.class);
 
-        // Create a StoryService instance and wrap it with a spy that will use the mock service
-        storyServiceSpy = Mockito.spy(new StoryService());
-        Mockito.when(storyServiceSpy.getServerFacade()).thenReturn(mockServerFacade);
+        // Wrap a FollowersPresenter in a spy that will use the mock service.
+        presenter = Mockito.spy(new StoryPresenter(new StoryPresenter.View() {}));
+        Mockito.when(presenter.getStoryService()).thenReturn(mockStoryService);
     }
 
     @Test
     public void testGetStory_validRequest_correctResponse() throws IOException {
-        StoryResponse response = storyServiceSpy.getStory(validRequest);
-        Assertions.assertEquals(successResponse, response);
+        Mockito.when(mockStoryService.getStory(validRequest)).thenReturn(successResponse);
+
+        // Assert that the presenter returns the same response as the service (it doesn't do
+        // anything else, so there's nothing else to test).
+        Assertions.assertEquals(successResponse, presenter.getStory(validRequest));
     }
 
     @Test
-    public void testGetStory_validRequest_loadsProfileImages() throws IOException {
-        StoryResponse response = storyServiceSpy.getStory(validRequest);
+    public void testGetStory_serviceThrowsIOException_presenterThrowsIOException() throws IOException {
+        Mockito.when(mockStoryService.getStory(validRequest)).thenThrow(new IOException());
 
-        for(Status status : response.getStory()) {
-            byte [] bytes = ByteArrayUtils.bytesFromUrl(status.getUser().getImageUrl());
-            status.getUser().setImageBytes(bytes);
-            Assertions.assertNotNull(status.getUser().getImageBytes());
-        }
-    }
-
-    @Test
-    public void testGetStory_invalidRequest_nullUser() throws IOException {
-        StoryResponse response = storyServiceSpy.getStory(invalidRequestOne);
-        Assertions.assertEquals(failureResponse, response);
-    }
-
-    @Test
-    public void testGetStory_invalidRequest_negativeLimit() throws IOException {
-        StoryResponse response = storyServiceSpy.getStory(invalidRequestTwo);
-        Assertions.assertEquals(failureResponse, response);
+        Assertions.assertThrows(IOException.class, () -> {
+            presenter.getStory(validRequest);
+        });
     }
 
     private List<Status> getStory(User definedUser) {

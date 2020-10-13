@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.presenter;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.service.RetrieveUserService;
+import edu.byu.cs.tweeter.model.service.RetrieveUserService;
 import edu.byu.cs.tweeter.model.service.request.RetrieveUserRequest;
 import edu.byu.cs.tweeter.model.service.response.RetrieveUserResponse;
 
@@ -34,5 +35,9 @@ public class RetrieveUserPresenter {
     public RetrieveUserResponse retrieveUser(RetrieveUserRequest retrieveUserRequest) throws IOException {
         RetrieveUserService retrieveUserService = new RetrieveUserService();
         return retrieveUserService.retrieveUser(retrieveUserRequest);
+    }
+
+    public RetrieveUserService getRetrieveUserService() {
+        return new RetrieveUserService();
     }
 }

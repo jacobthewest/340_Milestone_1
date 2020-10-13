@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.model.service;
+package edu.byu.cs.tweeter.presenter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,20 +13,17 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.service.SubmitTweetService;
 import edu.byu.cs.tweeter.model.service.request.SubmitTweetRequest;
 import edu.byu.cs.tweeter.model.service.response.SubmitTweetResponse;
 
-public class SubmitTweetServiceTest {
+public class SubmitTweetPresenterTest {
 
     private static final String MALE_IMAGE_URL = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
     private SubmitTweetRequest validRequest;
-    private SubmitTweetRequest invalidRequest1;
-    private SubmitTweetRequest invalidRequest2;
-    private SubmitTweetRequest invalidRequest3;
     private SubmitTweetResponse successResponse;
-    private SubmitTweetResponse failureResponse;
-    private SubmitTweetService submitTweetServiceSpy;
+    private SubmitTweetService mockSubmitTweetService;
+    private SubmitTweetPresenter presenter;
 
     @BeforeEach
     public void setup() {
@@ -37,47 +34,24 @@ public class SubmitTweetServiceTest {
 
         // Setup request objects to use in the tests
         validRequest = new SubmitTweetRequest(recognizedUser, recognizedStatus);
-        invalidRequest1 = new SubmitTweetRequest(recognizedUser, unRecognizedStatus);
-        invalidRequest2 = new SubmitTweetRequest(null, recognizedStatus);
-        invalidRequest3 = new SubmitTweetRequest(recognizedUser, null);
-
         // Setup a mock ServerFacade that will return known responses
         successResponse = new SubmitTweetResponse(recognizedUser, recognizedStatus);
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
-        Mockito.when(mockServerFacade.submitTweet(validRequest)).thenReturn(successResponse);
 
-        failureResponse = new SubmitTweetResponse("An exception occured");
-        Mockito.when(mockServerFacade.submitTweet(invalidRequest1)).thenReturn(failureResponse);
-        Mockito.when(mockServerFacade.submitTweet(invalidRequest2)).thenReturn(failureResponse);
-        Mockito.when(mockServerFacade.submitTweet(invalidRequest3)).thenReturn(failureResponse);
+        // Create a mock FollowersService
+        mockSubmitTweetService = Mockito.mock(SubmitTweetService.class);
 
-        // Create a SubmitTweetService instance and wrap it with a spy that will use the mock service
-        submitTweetServiceSpy = Mockito.spy(new SubmitTweetService());
-        Mockito.when(submitTweetServiceSpy.getServerFacade()).thenReturn(mockServerFacade);
+        // Wrap a FollowersPresenter in a spy that will use the mock service.
+        presenter = Mockito.spy(new SubmitTweetPresenter(new SubmitTweetPresenter.View() {}));
+        Mockito.when(presenter.getSubmitTweetService()).thenReturn(mockSubmitTweetService);
     }
 
     @Test
     public void testSubmitTweet_validRequest_correctResponse() throws IOException {
-        SubmitTweetResponse response = submitTweetServiceSpy.submitTweet(validRequest);
-        Assertions.assertEquals(successResponse, response);
-    }
+        Mockito.when(mockSubmitTweetService.submitTweet(validRequest)).thenReturn(successResponse);
 
-    @Test
-    public void testSubmitTweet_invalidRequest_userDoesNotMatchStatus() throws IOException {
-        SubmitTweetResponse response = submitTweetServiceSpy.submitTweet(invalidRequest1);
-        Assertions.assertEquals(failureResponse, response);
-    }
-
-    @Test
-    public void testSubmitTweet_invalidRequest_userIsNull() throws IOException {
-        SubmitTweetResponse response = submitTweetServiceSpy.submitTweet(invalidRequest2);
-        Assertions.assertEquals(failureResponse, response);
-    }
-
-    @Test
-    public void testSubmitTweet_invalidRequest_statusIsNull() throws IOException {
-        SubmitTweetResponse response = submitTweetServiceSpy.submitTweet(invalidRequest3);
-        Assertions.assertEquals(failureResponse, response);
+        // Assert that the presenter returns the same response as the service (it doesn't do
+        // anything else, so there's nothing else to test).
+        Assertions.assertEquals(successResponse, presenter.submitTweet(validRequest));
     }
 
     private Status getRecognizedStatus(User user) {

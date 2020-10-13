@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.model.service.response;
 
+import java.util.Objects;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -48,5 +50,29 @@ public class LoginResponse extends Response {
      */
     public AuthToken getAuthToken() {
         return authToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LoginResponse that = (LoginResponse) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(authToken, that.authToken) &&
+                Objects.equals(this.getMessage(), that.getMessage()) &&
+                this.isSuccess() == that.isSuccess();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, authToken);
+    }
+
+    @Override
+    public String toString() {
+        return "LoginResponse{" +
+                "user=" + user +
+                ", authToken=" + authToken +
+                '}';
     }
 }

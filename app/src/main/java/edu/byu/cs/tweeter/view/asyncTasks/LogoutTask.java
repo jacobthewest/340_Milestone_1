@@ -6,11 +6,12 @@ import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.service.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
+import edu.byu.cs.tweeter.presenter.LogoutPresenter;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
 
 public class LogoutTask extends AsyncTask<LogoutRequest, Void, LogoutResponse> {
 
-    private final MainPresenter presenter;
+    private final LogoutPresenter presenter;
     private final LogoutTask.Observer observer;
     private Exception exception;
 
@@ -30,7 +31,7 @@ public class LogoutTask extends AsyncTask<LogoutRequest, Void, LogoutResponse> {
      * @param presenter the presenter this task should use to logout.
      * @param observer the observer who wants to be notified when this task completes.
      */
-    public LogoutTask(MainPresenter presenter, LogoutTask.Observer observer) {
+    public LogoutTask(LogoutPresenter presenter, LogoutTask.Observer observer) {
         if(observer == null) {
             throw new NullPointerException();
         }

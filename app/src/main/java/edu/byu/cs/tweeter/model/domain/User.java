@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.model.domain;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -73,16 +74,8 @@ public class User implements Comparable<User>, Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return alias.equals(user.alias);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(alias);
+    public int compareTo(User user) {
+        return this.getAlias().compareTo(user.getAlias());
     }
 
     @Override
@@ -92,11 +85,26 @@ public class User implements Comparable<User>, Serializable {
                 ", lastName='" + lastName + '\'' +
                 ", alias='" + alias + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", password='" + password +
                 '}';
     }
 
     @Override
-    public int compareTo(User user) {
-        return this.getAlias().compareTo(user.getAlias());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) &&
+                Objects.equals(alias, user.alias) &&
+                Objects.equals(imageUrl, user.imageUrl) &&
+                Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(firstName, lastName, alias, imageUrl, password);
+        result = 31 * result;
+        return result;
     }
 }

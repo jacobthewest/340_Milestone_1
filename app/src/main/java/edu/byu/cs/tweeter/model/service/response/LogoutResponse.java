@@ -2,6 +2,8 @@ package edu.byu.cs.tweeter.model.service.response;
 
 import android.database.DatabaseUtils;
 
+import java.util.Objects;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -50,5 +52,27 @@ public class LogoutResponse extends Response {
      */
     public AuthToken getAuthToken() {
         return authToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LogoutResponse that = (LogoutResponse) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(authToken, that.authToken);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, authToken);
+    }
+
+    @Override
+    public String toString() {
+        return "LogoutResponse{" +
+                "user=" + user +
+                ", authToken=" + authToken +
+                '}';
     }
 }

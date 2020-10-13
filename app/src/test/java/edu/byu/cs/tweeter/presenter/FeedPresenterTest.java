@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.model.service;
+package edu.byu.cs.tweeter.presenter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,18 +14,21 @@ import java.util.List;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.service.CountService;
+import edu.byu.cs.tweeter.model.service.FeedService;
 import edu.byu.cs.tweeter.model.service.request.FeedRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
 import edu.byu.cs.tweeter.util.ByteArrayUtils;
 
-public class FeedServiceTest {
+public class FeedPresenterTest {
 
     private FeedRequest validRequest;
     private FeedRequest invalidRequestOne;
     private FeedRequest invalidRequestTwo;
     private FeedResponse successResponse;
     private FeedResponse failureResponse;
-    private FeedService feedServiceSpy;
+    private FeedService mockFeedService;
+    private FeedPresenter presenter;
     private String imageUrl = "https://i.imgur.com/VZQQiQ1.jpg";
     private final User JacobWest = new User("Jacob", "West", "@JacobWest", imageUrl, "password");
     private final User RickyMartin = new User("Ricky", "Martin", "@RickyMartin", imageUrl, "password");
@@ -41,49 +44,35 @@ public class FeedServiceTest {
 
         // Setup request objects to use in the tests
         validRequest = new FeedRequest(currentUser, 5, null);
-        invalidRequestOne = new FeedRequest(null, 5, null);
-        invalidRequestTwo = new FeedRequest(currentUser, -1, null);
 
         // Setup a mock ServerFacade that will return known responses
         successResponse = new FeedResponse(feed, false);
-        Mockito.when(mockServerFacade.getFeed(validRequest)).thenReturn(successResponse);
 
-        failureResponse = new FeedResponse("An exception occured");
-        Mockito.when(mockServerFacade.getFeed(invalidRequestOne)).thenReturn(failureResponse);
-        Mockito.when(mockServerFacade.getFeed(invalidRequestTwo)).thenReturn(failureResponse);
+        // Create a mock FollowersService
+        mockFeedService = Mockito.mock(FeedService.class);
 
-        // Create a FeedService instance and wrap it with a spy that will use the mock service
-        feedServiceSpy = Mockito.spy(new FeedService());
-        Mockito.when(feedServiceSpy.getServerFacade()).thenReturn(mockServerFacade);
+        // Wrap a FollowersPresenter in a spy that will use the mock service.
+        presenter = Mockito.spy(new FeedPresenter(new FeedPresenter.View() {}));
+        Mockito.when(presenter.getFeedService()).thenReturn(mockFeedService);
+
     }
 
     @Test
     public void testGetFeed_validRequest_correctResponse() throws IOException {
-        FeedResponse response = feedServiceSpy.getFeed(validRequest);
-        Assertions.assertEquals(successResponse, response);
+        Mockito.when(mockFeedService.getFeed(validRequest)).thenReturn(successResponse);
+
+        // Assert that the presenter returns the same response as the service (it doesn't do
+        // anything else, so there's nothing else to test).
+        Assertions.assertEquals(successResponse, presenter.getFeed(validRequest));
     }
 
     @Test
-    public void testGetFeed_validRequest_loadsProfileImages() throws IOException {
-        FeedResponse response = feedServiceSpy.getFeed(validRequest);
+    public void testGetFeed_serviceThrowsIOException_presenterThrowsIOException() throws IOException {
+        Mockito.when(mockFeedService.getFeed(validRequest)).thenThrow(new IOException());
 
-        for(Status status : response.getFeed()) {
-            byte [] bytes = ByteArrayUtils.bytesFromUrl(status.getUser().getImageUrl());
-            status.getUser().setImageBytes(bytes);
-            Assertions.assertNotNull(status.getUser().getImageBytes());
-        }
-    }
-
-    @Test
-    public void testGetFeed_invalidRequest_nullUser() throws IOException {
-        FeedResponse response = feedServiceSpy.getFeed(invalidRequestOne);
-        Assertions.assertEquals(failureResponse, response);
-    }
-
-    @Test
-    public void testGetFeed_invalidRequest_negativeLimit() throws IOException {
-        FeedResponse response = feedServiceSpy.getFeed(invalidRequestTwo);
-        Assertions.assertEquals(failureResponse, response);
+        Assertions.assertThrows(IOException.class, () -> {
+            presenter.getFeed(validRequest);
+        });
     }
 
     private List<Status> getFeed() {
