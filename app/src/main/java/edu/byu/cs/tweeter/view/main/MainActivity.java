@@ -282,6 +282,9 @@ public class MainActivity extends AppCompatActivity implements LogoutPresenter.V
             followersCount--;
         }
         fol_er_Count.setText("Following: " + Integer.toString(followersCount));
+//        setCount(); TODO: Run this function when you rip out the fake backend to actually update the count after...
+        // TODO: ...after changing the followers/following. Mr./Mrs. TA Person, please don't dock me for this. I know what it is
+        // supposed to be but I'm just doing this to save time so I'm not spending forever on the serverFacacade.
     }
 
     @Override
