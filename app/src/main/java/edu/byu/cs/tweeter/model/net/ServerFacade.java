@@ -81,6 +81,10 @@ public class ServerFacade {
     private final User Rudy = new User("Rudy", "Gobert", "@Rudy", MIKE, "password");
     private final User BillBelichick = new User("Bill", "Belichick", "@BillBelichick", MIKE, "password");
     private final User TestUser = new User("Test", "User", "@TestUser", MALE_IMAGE_URL, "password");
+    private final User userBarney = new User("Barney", "Rubble", "", "password");
+    private final User DaffyDuck = new User("Daffy", "Duck", "", "password");
+    private final User Zoe = new User("Zoe", "Zabriski", "", "password");
+
 
     public UpdateFollowResponse updateFollow(UpdateFollowRequest request) {
         if(this.dummyFollowees == null) {
@@ -313,6 +317,13 @@ public class ServerFacade {
             if(request.getUser() == null) {
                 throw new AssertionError();
             }
+        }
+
+        final User user9 = new User("Albert", "Awesome", "", "password"); // 1  followee
+        if(request.getUser().equals(user9)) {
+            List<User> returnMe = new ArrayList<>();
+            returnMe.add(BillBelichick);
+            return new FollowingResponse(returnMe, false);
         }
 
         if(!isRecognizedUser(request.getUser().getAlias())) {
@@ -1163,7 +1174,8 @@ public class ServerFacade {
                 alias.equals(user17.getAlias()) || alias.equals(user18.getAlias()) || alias.equals(user19.getAlias()) || alias.equals(user20.getAlias()) ||
                 alias.equals(JacobWest.getAlias()) || alias.equals(RickyMartin.getAlias()) || alias.equals(RobertGardner.getAlias()) || alias.equals(Snowden.getAlias()) ||
                 alias.equals(TristanThompson.getAlias()) || alias.equals(KCP.getAlias()) || alias.equals(theMedia.getAlias()) || alias.equals(Rudy.getAlias()) ||
-                alias.equals(BillBelichick.getAlias()) || alias.equals(TestUser.getAlias())) { return true;}
+                alias.equals(BillBelichick.getAlias()) || alias.equals(TestUser.getAlias()) || alias.equals(userBarney.getAlias()) ||
+                alias.equals(DaffyDuck.getAlias()) || alias.equals(Zoe.getAlias())) { return true;}
         return false;
     }
 }
