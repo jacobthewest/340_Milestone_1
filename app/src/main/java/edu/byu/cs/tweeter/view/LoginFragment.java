@@ -34,8 +34,6 @@ public class LoginFragment extends Fragment implements LoginPresenter.View, Logi
     private static final String FOLLOW_KEY = "FollowKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
-    private User user;
-    private AuthToken authToken;
     private LoginPresenter presenter;
     private Toast loginToast;
 

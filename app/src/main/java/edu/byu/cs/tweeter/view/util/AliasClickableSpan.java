@@ -46,7 +46,6 @@ public class AliasClickableSpan extends ClickableSpan implements RetrieveUserPre
     public void onClick(@NonNull View widget) {
         RetrieveUserRequest retrieveUserRequest = new RetrieveUserRequest(mention);
         RetrieveUserTask retrieveUserTask = new RetrieveUserTask(presenter, getObserver());
-
         retrieveUserTask.execute(retrieveUserRequest);
     }
 

@@ -22,7 +22,7 @@ public class UpdateFollowService {
      *
      * @return the instance.
      */
-    ServerFacade getServerFacade() {
+    public ServerFacade getServerFacade() {
         return new ServerFacade();
     }
 }

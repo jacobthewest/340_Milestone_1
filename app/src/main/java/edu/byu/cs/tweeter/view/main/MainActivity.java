@@ -35,7 +35,6 @@ import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
 import edu.byu.cs.tweeter.presenter.CountPresenter;
 import edu.byu.cs.tweeter.presenter.FollowingPresenter;
 import edu.byu.cs.tweeter.presenter.LogoutPresenter;
-import edu.byu.cs.tweeter.presenter.MainPresenter;
 import edu.byu.cs.tweeter.presenter.UpdateFollowPresenter;
 import edu.byu.cs.tweeter.view.HomeActivity;
 import edu.byu.cs.tweeter.view.asyncTasks.CountTask;
@@ -297,7 +296,6 @@ public class MainActivity extends AppCompatActivity implements LogoutPresenter.V
         this.following = followingResponse.getFollowees();
         followButtonHelper(this.following, this.followUser);
         // TODO: What do we do with the followees retrieved?
-
     }
 
     private void followButtonHelper(List<User> followingParam, User followUserParam) {

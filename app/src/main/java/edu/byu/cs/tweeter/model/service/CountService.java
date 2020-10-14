@@ -24,7 +24,7 @@ public class CountService {
      *
      * @return the instance.
      */
-    ServerFacade getServerFacade() {
+    public ServerFacade getServerFacade() {
         return new ServerFacade();
     }
 }

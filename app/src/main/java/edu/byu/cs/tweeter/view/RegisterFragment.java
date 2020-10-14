@@ -42,9 +42,7 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
     private static final String FOLLOW_KEY = "FollowKey";
     private static final String AUTH_TOKEN_KEY = "AuthTokenKey";
 
-    private User user;
     private String imageUrl;
-    private AuthToken authToken;
     private RegisterPresenter presenter;
     private Toast registerToast;
     private ImageView imageToUpload;
