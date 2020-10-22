@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".view.main.tweet.TweetFragment">
+    tools:context=".client.view.main.tweet.TweetFragment">
     <LinearLayout
         android:id="@+id/tweetButtonsLinearLayout"
         android:layout_width="match_parent"
