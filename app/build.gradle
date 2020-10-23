@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+//    buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "edu.byu.cs.tweeter"
+        applicationId "edu.byu.cs.tweeter.client"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
@@ -18,12 +18,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = 1.11
-        targetCompatibility = 1.11
+        sourceCompatibility = "1.11"
+        targetCompatibility = "1.11"
     }
 }
 
 dependencies {
+    'C:\\Users\\jacob\\AppData\\Local\\Android\\Sdk'
+//    compile classPath("C:\\Users\\jacob\\AppData\\Local\\Android\\Sdk")
+    compileClasspath += project.rootProject.files("$C:\\Users\\jacob\\AppData\\Local\\Android\\Sdk\android-29\android.jar")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
@@ -31,6 +34,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation project(path: ':shared')
+    implementation fileTree(dir: 'C:\\Users\\jacob\\AppData\\Local\\Android\\Sdk', include: ['*.aar', '*.jar'], exclude: [])
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
     testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

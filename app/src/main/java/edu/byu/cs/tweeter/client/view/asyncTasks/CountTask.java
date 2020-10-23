@@ -1,12 +1,11 @@
 package edu.byu.cs.tweeter.client.view.asyncTasks;
 
 import android.os.AsyncTask;
-
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.client.presenter.CountPresenter;
 import edu.byu.cs.tweeter.shared.model.service.request.CountRequest;
 import edu.byu.cs.tweeter.shared.model.service.response.CountResponse;
-import edu.byu.cs.tweeter.client.presenter.CountPresenter;
 
 public class CountTask extends AsyncTask<CountRequest, Void, CountResponse> {
 

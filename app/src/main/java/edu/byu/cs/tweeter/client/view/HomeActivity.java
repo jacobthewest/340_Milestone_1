@@ -10,7 +10,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
-import edu.byu.cs.tweeter.R;
+import edu.byu.cs.tweeter.client.R;
 
 /**
  * The home activity for the application. Contains tabs for login and register.
