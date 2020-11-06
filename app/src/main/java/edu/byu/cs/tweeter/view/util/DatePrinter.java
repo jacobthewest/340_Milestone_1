@@ -19,6 +19,8 @@ public class DatePrinter {
         this.calendar = cal;
     }
 
+    public DatePrinter() {}
+
     /**
      * Formats a date like this " Sep 15 2020 10:55 PM"
      * @return the perfect tweet time posting!!

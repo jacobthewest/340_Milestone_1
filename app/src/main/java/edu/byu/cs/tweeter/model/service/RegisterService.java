@@ -3,7 +3,7 @@ package edu.byu.cs.tweeter.model.service;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
 import edu.byu.cs.tweeter.util.ByteArrayUtils;
@@ -14,7 +14,7 @@ import edu.byu.cs.tweeter.util.ByteArrayUtils;
 public class RegisterService {
 
     public RegisterResponse getRegister(RegisterRequest request) throws IOException {
-        ServerFacade serverFacade = getServerFacade();
+        ServerFacadeMine serverFacade = getServerFacade();
         RegisterResponse registerResponse = serverFacade.register(request);
 
         if(registerResponse.isSuccess()) {
@@ -42,14 +42,14 @@ public class RegisterService {
     }
 
     /**
-     * Returns an instance of {@link ServerFacade}. Allows mocking of the ServerFacade class for
+     * Returns an instance of {@link ServerFacadeMine}. Allows mocking of the ServerFacade class for
      * testing purposes. All usages of ServerFacade should get their ServerFacade instance from this
      * method to allow for proper mocking.
      *
      * @return the instance.
      */
-    public ServerFacade getServerFacade() {
-        return new ServerFacade();
+    public ServerFacadeMine getServerFacade() {
+        return new ServerFacadeMine();
     }
 }
 

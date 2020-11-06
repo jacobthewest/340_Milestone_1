@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.service.response.LogoutResponse;
 
@@ -37,7 +37,7 @@ public class LogoutServiceTest {
 
         // Setup a mock ServerFacade that will return known responses
         successResponse = new LogoutResponse(user, authTokenMatching);
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         Mockito.when(mockServerFacade.logout(validRequest)).thenReturn(successResponse);
 
         failureResponse = new LogoutResponse("An exception occured");

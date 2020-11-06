@@ -11,8 +11,6 @@ import java.io.InputStream;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
-import edu.byu.cs.tweeter.model.service.CountService;
 import edu.byu.cs.tweeter.model.service.RegisterService;
 import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.service.response.RegisterResponse;

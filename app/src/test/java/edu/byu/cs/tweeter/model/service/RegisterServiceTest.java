@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.service.response.RegisterResponse;
 import edu.byu.cs.tweeter.view.util.ImageUtils;
@@ -56,7 +56,7 @@ public class RegisterServiceTest {
 
         // Setup a mock ServerFacade that will return known responses
         successResponse = new RegisterResponse(user, authToken);
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         Mockito.when(mockServerFacade.register(validRequest)).thenReturn(successResponse);
 
         failureResponse = new RegisterResponse("An exception occured");

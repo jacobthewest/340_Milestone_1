@@ -13,12 +13,10 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
-import edu.byu.cs.tweeter.model.service.CountService;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.FeedService;
 import edu.byu.cs.tweeter.model.service.request.FeedRequest;
 import edu.byu.cs.tweeter.model.service.response.FeedResponse;
-import edu.byu.cs.tweeter.util.ByteArrayUtils;
 
 public class FeedPresenterTest {
 
@@ -38,7 +36,7 @@ public class FeedPresenterTest {
 
     @BeforeEach
     public void setup() {
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         User currentUser = new User("Test", "User", null, "password");
         List<Status> feed = getFeed();
 

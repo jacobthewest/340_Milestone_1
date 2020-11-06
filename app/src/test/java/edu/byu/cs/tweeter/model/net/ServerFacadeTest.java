@@ -67,11 +67,11 @@ class ServerFacadeTest {
             follow7, follow8, follow9, follow10, follow11, follow12, follow13, follow14, follow15,
             follow16);
 
-    private ServerFacade serverFacadeSpy;
+    private ServerFacadeMine serverFacadeSpy;
 
     @BeforeEach
     void setup() {
-        serverFacadeSpy = Mockito.spy(new ServerFacade());
+        serverFacadeSpy = Mockito.spy(new ServerFacadeMine());
 
         FollowGenerator mockFollowGenerator = Mockito.mock(FollowGenerator.class);
         Mockito.when(mockFollowGenerator.generateUsersAndFollows(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), (FollowGenerator.Sort) Mockito.any())).thenReturn(follows);

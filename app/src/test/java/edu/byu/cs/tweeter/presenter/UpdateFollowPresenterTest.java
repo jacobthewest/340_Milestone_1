@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.UpdateFollowService;
 import edu.byu.cs.tweeter.model.service.request.UpdateFollowRequest;
 import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
@@ -62,7 +62,7 @@ public class UpdateFollowPresenterTest {
     }
 
     private List<User> getFollowing() {
-        ServerFacade sf = new ServerFacade();
+        ServerFacadeMine sf = new ServerFacadeMine();
         List<User> returnMe = new ArrayList<>(sf.getDummyFollowees());
         return returnMe;
     }

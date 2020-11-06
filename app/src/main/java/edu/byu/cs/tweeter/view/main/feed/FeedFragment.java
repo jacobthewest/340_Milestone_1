@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -141,8 +142,8 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * @param status the status.
          */
         void bindStatus(Status status) {
-            SpannableString tempPostText = formulatePostText(status); // TODO: Update this thing right here.
-            String tempTimePosted = formulateTimePosted(status.getTimePosted());
+            SpannableString tempPostText = formulatePostText(status);
+            String tempTimePosted = status.getTimePosted();
             User statusUser = status.getUser();
 
             userImage.setImageDrawable(ImageUtils.drawableFromByteArray(user.getImageBytes()));
@@ -162,16 +163,28 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
             String tweetText = status.getTweetText();
             Spannable spannable = new SpannableString(tweetText);
 
+            String[] arrUrls = null;
             if(status.getUrls() != null) {
-                for(String url : status.getUrls()) {
+                arrUrls = status.getUrls().split("\\s+");
+            }
+
+            if(status.getUrls() != null) {
+                List<String> urls = Arrays.asList(arrUrls);
+                for(String url : urls) {
                     int startIndex = tweetText.indexOf(url);
                     int endIndex = startIndex + url.length();
                     spannable.setSpan(new UrlClickableSpan(url, getActivity()), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
 
+            String[] arrMentions = null;
             if(status.getMentions() != null) {
-                for(String mention : status.getMentions()) {
+                arrMentions = status.getMentions().split("\\s+");
+            }
+
+            if(status.getMentions() != null) {
+                List<String> mentions = Arrays.asList(arrMentions);
+                for(String mention : mentions) {
                     int startIndex = tweetText.indexOf(mention);
                     int endIndex = startIndex + mention.length();
                     spannable.setSpan(new AliasClickableSpan(getActivity(), user, mention, authToken ), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -354,10 +367,10 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * loading footer view) at the bottom of the list.
          */
         private void addLoadingFooter() {
-            List<String> mentions = getMentions();
+            String mentions = getMentions();
             Calendar timePosted = getTimePosted();
             String postUrl = "Statuses are loading";
-            addItem(new Status(new User("Dummy", "User", "", "password"), postUrl, null, timePosted, mentions));
+            addItem(new Status(new User("Dummy", "User", "", "password"), postUrl, null, timePosted.toString(), mentions));
         }
 
         /**
@@ -372,11 +385,8 @@ public class FeedFragment extends Fragment implements FeedPresenter.View {
          * Generates a mention for the addLoadingFooter function
          * @return A list of mentions
          */
-        private List<String> getMentions() {
-            List<String> mentions = new ArrayList<>();
-            mentions.add("@TestMention");
-            mentions.add("@TheRealSlimShady");
-            return mentions;
+        private String getMentions() {
+            return "@TestMention @TheRealSlimShady";
         }
 
         /**

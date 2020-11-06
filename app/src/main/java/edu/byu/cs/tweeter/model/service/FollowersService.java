@@ -3,7 +3,7 @@ package edu.byu.cs.tweeter.model.service;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.service.response.FollowersResponse;
 import edu.byu.cs.tweeter.util.ByteArrayUtils;
@@ -16,7 +16,7 @@ public class FollowersService {
     /**
      * Returns the users who are following the specified user in the request. Uses information in
      * the request object to limit the number of followers returned and to return the next set of
-     * followers after any that were returned in a previous request. Uses the {@link ServerFacade} to
+     * followers after any that were returned in a previous request. Uses the {@link ServerFacadeMine} to
      * get the followers from the server.
      *
      * @param request contains the data required to fulfill the request.
@@ -45,13 +45,13 @@ public class FollowersService {
     }
 
     /**
-     * Returns an instance of {@link ServerFacade}. Allows mocking of the ServerFacade class for
+     * Returns an instance of {@link ServerFacadeMine}. Allows mocking of the ServerFacade class for
      * testing purposes. All usages of ServerFacade should get their ServerFacade instance from this
      * method to allow for proper mocking.
      *
      * @return the instance.
      */
-    public ServerFacade getServerFacade() {
-        return new ServerFacade();
+    public ServerFacadeMine getServerFacade() {
+        return new ServerFacadeMine();
     }
 }

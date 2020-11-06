@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.LoginRequest;
 import edu.byu.cs.tweeter.model.service.response.LoginResponse;
 
@@ -36,7 +36,7 @@ public class LoginServiceTest {
 
         // Setup a mock ServerFacade that will return known responses
         successResponse = new LoginResponse(user, authToken);
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         Mockito.when(mockServerFacade.login(validRequest)).thenReturn(successResponse);
 
         failureResponse = new LoginResponse("An exception occured");

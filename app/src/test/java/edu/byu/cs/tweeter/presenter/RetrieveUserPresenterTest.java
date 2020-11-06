@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.RetrieveUserService;
 import edu.byu.cs.tweeter.model.service.request.RetrieveUserRequest;
 import edu.byu.cs.tweeter.model.service.response.RetrieveUserResponse;
@@ -25,7 +25,7 @@ public class RetrieveUserPresenterTest {
 
     @BeforeEach
     public void setup() {
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         User currentUser = new User("Test", "User", MALE_IMAGE_URL, "password");
 
         // Setup request objects to use in the tests

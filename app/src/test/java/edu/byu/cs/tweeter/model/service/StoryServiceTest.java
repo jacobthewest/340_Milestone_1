@@ -13,7 +13,7 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.StoryRequest;
 import edu.byu.cs.tweeter.model.service.response.StoryResponse;
 import edu.byu.cs.tweeter.util.ByteArrayUtils;
@@ -29,7 +29,7 @@ public class StoryServiceTest {
 
     @BeforeEach
     public void setup() {
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         User currentUser = new User("Test", "User", MALE_IMAGE_URL, "password");
         List<Status> story = getStory(currentUser);
 

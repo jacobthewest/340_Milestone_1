@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.model.net;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -41,7 +43,7 @@ import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
  * Acts as a Facade to the Tweeter server. All network requests to the server should go through
  * this class.
  */
-public class ServerFacade {
+public class ServerFacadeMine {
     private static Map<String, List<Status>> storyStatusesByUser;
     private static Map<String, List<Status>> feedStatusesByUser;
     private List<User> dummyFollowees;
@@ -593,351 +595,279 @@ public class ServerFacade {
 
     public List<Status> get21Statuses(User definedUser) {
         List<Status> feed = new ArrayList<>();
+        DateFormat dateFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
 
         if(definedUser == null) {
             // --------------------- 1--------------------- //
-            List<String> uOne = new ArrayList<>();
-            uOne.add("multiply.com");
-            List<String> mOne = new ArrayList<>();
-            mOne.add("@JacobWest");
-            mOne.add("@RickyMartin");
+            String uOne = "multiply.com";
+            String mOne = "@JacobWest @RickyMartin";
             Date d = createDate(2020, 0, 11, 0, 13);
-            Calendar a = Calendar.getInstance();
-            a.setTime(d);
+            String a = dateFormat.format(d);
             Status s = new Status(BillBelichick, "This is a text @JacobWest @RickyMartin multiply.com", uOne, a, mOne);
             feed.add(s); // # 1
 
             // --------------------- 2 --------------------- //
-            List<String> uTwo = new ArrayList<>();
-            uTwo.add("tinyurl.com");
+            String uTwo = "tinyurl.com";
             d = createDate(2020, 0, 11, 0, 14);
-            Calendar b = Calendar.getInstance();
-            b.setTime(d);
+            String b = dateFormat.format(d);
             s = new Status(Rudy, "You should visit tinyurl.com", uTwo, b, null);
             feed.add(s);
 
             // --------------------- 3 --------------------- //
-            List<String> mThree = new ArrayList<>();
-            mThree.add("@JacobWest");
+            String mThree = "@JacobWest";
             d = createDate(2019, 3, 16, 3, 34);
-            Calendar c = Calendar.getInstance();
-            c.setTime(d);
+            String c = dateFormat.format(d);
             s = new Status(theMedia, "Dolphins @JacobWest have Tua", null, c, mThree);
             feed.add(s);
 
             // --------------------- 4 --------------------- //
             d = createDate(2014, 7, 30, 17, 01);
-            Calendar de = Calendar.getInstance();
-            de.setTime(d);
+            String de = dateFormat.format(d);
             s = new Status(JacobWest, "Jacksonville will draft third", null, de, null);
             feed.add(s);
 
             // --------------------- 5 --------------------- //
-            List<String> uFive = new ArrayList<>();
-            uFive.add("dell.com");
+            String uFive = "dell.com";
             d = createDate(2012, 3, 3, 18, 21);
-            Calendar e = Calendar.getInstance();
-            e.setTime(d);
+            String e = dateFormat.format(d);
             s = new Status(RickyMartin, "I endorse dell.com", uFive, e, null);
             feed.add(s);
 
             // --------------------- 6 --------------------- //
-            List<String> mSix = new ArrayList<>();
-            mSix.add("@RobertGardner");
-            mSix.add("@Snowden");
-            mSix.add("@TristanThompson");
+            String mSix = "@RobertGardner @Snowden @TristanThompson";
             d = createDate(2002, 10, 19, 14, 59);
-            Calendar f = Calendar.getInstance();
-            f.setTime(d);
+            String f = dateFormat.format(d);
             s = new Status(theMedia, "@RobertGardner @Snowden @TristanThompson", null, f, mSix);
             feed.add(s);
 
             // --------------------- 7 --------------------- //
             d = createDate(2000, 10, 19, 14, 59);
-            Calendar g = Calendar.getInstance();
-            g.setTime(d);
+            String g = dateFormat.format(d);
             s = new Status(KCP, ";)", null, g, null);
             feed.add(s);
 
             // --------------------- 8 --------------------- //
             d = createDate(2003, 5, 30, 16, 11);
-            Calendar h = Calendar.getInstance();
-            h.setTime(d);
+            String h = dateFormat.format(d);
             s = new Status(TristanThompson, "One, two, pick and roll", null, h, null);
             feed.add(s);
 
             // --------------------- 9 --------------------- //
             d = createDate(2001, 9, 4, 18, 29);
-            Calendar i = Calendar.getInstance();
-            i.setTime(d);
+            String i = dateFormat.format(d);
             s = new Status(Snowden, "A lot of old guys past their prime.", null, i, null);
             feed.add(s);
 
             // --------------------- 10 --------------------- //
             d = createDate(2019, 8, 12, 19, 1);
-            Calendar j = Calendar.getInstance();
-            j.setTime(d);
+            String j = dateFormat.format(d);
             s = new Status(TristanThompson, "I remember being a role player.", null, j, null);
             feed.add(s);
 
             // --------------------- 11 --------------------- //
-            List<String> uEleven = new ArrayList<>();
-            List<String> mEleven = new ArrayList<>();
-            uEleven.add("salon.com");
-            mEleven.add("@KCP");
+            String uEleven = "salon.com";
+            String mEleven = "@KCP";
             d = createDate(2007, 4, 15, 4, 43);
-            Calendar k = Calendar.getInstance();
-            k.setTime(d);
+            String k = dateFormat.format(d);
             s = new Status(theMedia, "Why did we sign him? @KCP. salon.com", uEleven, k, mEleven);
             feed.add(s);
 
             // --------------------- 12 --------------------- //
-            List<String> mTwelve = new ArrayList<>();
-            mTwelve.add("@theMedia");
-            mTwelve.add("@Rudy");
+            String mTwelve = "@theMedia @Rudy";
             d = createDate(2016, 8, 9, 8, 5);
-            Calendar l = Calendar.getInstance();
-            l.setTime(d);
+            String l = dateFormat.format(d);
             s = new Status(BillBelichick, "Rudy and I are chill @theMedia @Rudy", null, l, mTwelve);
             feed.add(s);
 
             // --------------------- 13 --------------------- //
             d = createDate(2013, 3, 13, 9, 56);
-            Calendar m = Calendar.getInstance();
-            m.setTime(d);
+            String m = dateFormat.format(d);
             s = new Status(JacobWest, "I am the tinker man!", null, m, null);
             feed.add(s);
 
             // --------------------- 14 --------------------- //
-            List<String> uFourteen = new ArrayList<>();
-            List<String> mFourteen = new ArrayList<>();
-            uFourteen.add("https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg");
-            mFourteen.add("@BillBelichick");
+            String uFourteen = "https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg";
+            String mFourteen = "@BillBelichick";
             d = createDate(2013, 3, 13, 9, 55);
-            Calendar n = Calendar.getInstance();
-            n.setTime(d);
+            String n = dateFormat.format(d);
             s = new Status(JacobWest, "We are the new power couple @BillBelichick https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg", uFourteen, n, mFourteen);
             feed.add(s);
 
             // --------------------- 15 --------------------- //
             d = createDate(2012, 3, 13, 9, 55);
-            Calendar o = Calendar.getInstance();
-            o.setTime(d);
+            String o = dateFormat.format(d);
             s = new Status(Snowden, "That takes a lot of ownership!", null, o, null);
             feed.add(s);
 
             // --------------------- 16 --------------------- //
             d = createDate(2012, 3, 12, 9, 55);
-            Calendar p = Calendar.getInstance();
-            p.setTime(d);
+            String p = dateFormat.format(d);
             s = new Status(TristanThompson, "We beat the clippers!", null, p, null);
             feed.add(s);
 
             // --------------------- 17 --------------------- //
             d = createDate(2012, 3, 12, 9, 45);
-            Calendar q = Calendar.getInstance();
-            q.setTime(d);
+            String q = dateFormat.format(d);
             s = new Status(BillBelichick, "I lift bro!", null, q, null);
             feed.add(s);
 
             // --------------------- 18 --------------------- //
             d = createDate(2010, 8, 17, 9, 55);
-            Calendar r = Calendar.getInstance();
-            r.setTime(d);
+            String r = dateFormat.format(d);
             s = new Status(Rudy, "The truth is an acquired taste.", null, r, null);
             feed.add(s);
 
             // --------------------- 19 --------------------- //
             d = createDate(2020, 8, 17, 9, 55);
-            Calendar sa = Calendar.getInstance();
-            sa.setTime(d);
+            String sa = dateFormat.format(d);
             s = new Status(RickyMartin, "Encuentra la buena vida baby! #CoronaLite", null, sa, null);
             feed.add(s);
 
             // --------------------- 20 --------------------- //
             d = createDate(2020, 0, 27, 23, 55);
-            Calendar t = Calendar.getInstance();
-            t.setTime(d);
+            String t = dateFormat.format(d);
             s = new Status(KCP, "Me calle bien el Snoop Dogg", null, t, null);
             feed.add(s);
 
             // --------------------- 21 --------------------- //
             d = createDate(2020, 3, 7, 9, 4);
-            Calendar u = Calendar.getInstance();
-            u.setTime(d);
+            String u = dateFormat.format(d);
             s = new Status(RobertGardner, "Hago buena musica", null, u, null);
             feed.add(s);
         } else {
             // --------------------- 1--------------------- //
-            List<String> uOne = new ArrayList<>();
-            uOne.add("multiply.com");
-            List<String> mOne = new ArrayList<>();
-            mOne.add("@JacobWest");
-            mOne.add("@RickyMartin");
+            String uOne = "multiply.com";
+            String mOne = "@JacobWest @RickyMartin";
             Date d = createDate(2020, 0, 11, 0, 13);
-            Calendar a = Calendar.getInstance();
-            a.setTime(d);
+            String a = dateFormat.format(d);
             Status s = new Status(definedUser, "This is a text @JacobWest @RickyMartin multiply.com", uOne, a, mOne);
             feed.add(s); // # 1
 
             // --------------------- 2 --------------------- //
-            List<String> uTwo = new ArrayList<>();
-            uTwo.add("tinyurl.com");
+            String uTwo = "tinyurl.com";
             d = createDate(2020, 0, 11, 0, 14);
-            Calendar b = Calendar.getInstance();
-            b.setTime(d);
+            String b = dateFormat.format(d);
             s = new Status(definedUser, "You should visit tinyurl.com", uTwo, b, null);
             feed.add(s);
 
             // --------------------- 3 --------------------- //
-            List<String> mThree = new ArrayList<>();
-            mThree.add("@JacobWest");
+            String mThree = "@JacobWest";
             d = createDate(2019, 3, 16, 3, 34);
-            Calendar c = Calendar.getInstance();
-            c.setTime(d);
+            String c = dateFormat.format(d);
             s = new Status(definedUser, "Dolphins @JacobWest have Tua", null, c, mThree);
             feed.add(s);
 
             // --------------------- 4 --------------------- //
             d = createDate(2014, 7, 30, 17, 01);
-            Calendar de = Calendar.getInstance();
-            de.setTime(d);
+            String de = dateFormat.format(d);
             s = new Status(definedUser, "Jacksonville will draft third", null, de, null);
             feed.add(s);
 
             // --------------------- 5 --------------------- //
-            List<String> uFive = new ArrayList<>();
-            uFive.add("dell.com");
+            String uFive = "dell.com";
             d = createDate(2012, 3, 3, 18, 21);
-            Calendar e = Calendar.getInstance();
-            e.setTime(d);
+            String e = dateFormat.format(d);
             s = new Status(definedUser, "I endorse dell.com", uFive, e, null);
             feed.add(s);
 
             // --------------------- 6 --------------------- //
-            List<String> mSix = new ArrayList<>();
-            mSix.add("@RobertGardner");
-            mSix.add("@Snowden");
-            mSix.add("@TristanThompson");
+            String mSix = "@RobertGardner @Snowden @TristanThompson";
             d = createDate(2002, 10, 19, 14, 59);
-            Calendar f = Calendar.getInstance();
-            f.setTime(d);
+            String f = dateFormat.format(d);
             s = new Status(definedUser, "@RobertGardner @Snowden @TristanThompson", null, f, mSix);
             feed.add(s);
 
             // --------------------- 7 --------------------- //
             d = createDate(2000, 10, 19, 14, 59);
-            Calendar g = Calendar.getInstance();
-            g.setTime(d);
+            String g = dateFormat.format(d);
             s = new Status(definedUser, ";)", null, g, null);
             feed.add(s);
 
             // --------------------- 8 --------------------- //
             d = createDate(2003, 5, 30, 16, 11);
-            Calendar h = Calendar.getInstance();
-            h.setTime(d);
+            String h = dateFormat.format(d);
             s = new Status(definedUser, "One, two, pick and roll", null, h, null);
             feed.add(s);
 
             // --------------------- 9 --------------------- //
             d = createDate(2001, 9, 4, 18, 29);
-            Calendar i = Calendar.getInstance();
-            i.setTime(d);
+            String i = dateFormat.format(d);
             s = new Status(definedUser, "A lot of old guys past their prime.", null, i, null);
             feed.add(s);
 
             // --------------------- 10 --------------------- //
             d = createDate(2019, 8, 12, 19, 1);
-            Calendar j = Calendar.getInstance();
-            j.setTime(d);
+            String j = dateFormat.format(d);
             s = new Status(definedUser, "I remember being a role player.", null, j, null);
             feed.add(s);
 
             // --------------------- 11 --------------------- //
-            List<String> uEleven = new ArrayList<>();
-            List<String> mEleven = new ArrayList<>();
-            uEleven.add("salon.com");
-            mEleven.add("@KCP");
+            String uEleven = "salon.com";
+            String mEleven = "@KCP";
             d = createDate(2007, 4, 15, 4, 43);
-            Calendar k = Calendar.getInstance();
-            k.setTime(d);
+            String k = dateFormat.format(d);
             s = new Status(definedUser, "Why did we sign him? @KCP. salon.com", uEleven, k, mEleven);
             feed.add(s);
 
             // --------------------- 12 --------------------- //
-            List<String> mTwelve = new ArrayList<>();
-            mTwelve.add("@theMedia");
-            mTwelve.add("@Rudy");
-            d = createDate(2016, 8, 9, 8, 5);
-            Calendar l = Calendar.getInstance();
-            l.setTime(d);
+            String mTwelve = "@theMedia @Rudy";
+            String l = dateFormat.format(d);
             s = new Status(definedUser, "Rudy and I are chill @theMedia @Rudy", null, l, mTwelve);
             feed.add(s);
 
             // --------------------- 13 --------------------- //
             d = createDate(2013, 3, 13, 9, 56);
-            Calendar m = Calendar.getInstance();
-            m.setTime(d);
+            String m = dateFormat.format(d);
             s = new Status(definedUser, "I am the tinker man!", null, m, null);
             feed.add(s);
 
             // --------------------- 14 --------------------- //
-            List<String> uFourteen = new ArrayList<>();
-            List<String> mFourteen = new ArrayList<>();
-            uFourteen.add("https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg");
-            mFourteen.add("@BillBelichick");
+            String uFourteen = "https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg";
+            String mFourteen = "@BillBelichick";
             d = createDate(2013, 3, 13, 9, 55);
-            Calendar n = Calendar.getInstance();
-            n.setTime(d);
+            String n = dateFormat.format(d);
             s = new Status(definedUser, "We are the new power couple @BillBelichick https://www.bostonherald.com/wp-content/uploads/2019/09/patsnl037.jpg", uFourteen, n, mFourteen);
             feed.add(s);
 
             // --------------------- 15 --------------------- //
             d = createDate(2012, 3, 13, 9, 55);
-            Calendar o = Calendar.getInstance();
-            o.setTime(d);
+            String o = dateFormat.format(d);
             s = new Status(definedUser, "That takes a lot of ownership!", null, o, null);
             feed.add(s);
 
             // --------------------- 16 --------------------- //
             d = createDate(2012, 3, 12, 9, 55);
-            Calendar p = Calendar.getInstance();
-            p.setTime(d);
+            String p = dateFormat.format(d);
             s = new Status(definedUser, "We beat the clippers!", null, p, null);
             feed.add(s);
 
             // --------------------- 17 --------------------- //
             d = createDate(2012, 3, 12, 9, 45);
-            Calendar q = Calendar.getInstance();
-            q.setTime(d);
+            String q = dateFormat.format(d);
             s = new Status(definedUser, "I lift bro!", null, q, null);
             feed.add(s);
 
             // --------------------- 18 --------------------- //
             d = createDate(2010, 8, 17, 9, 55);
-            Calendar r = Calendar.getInstance();
-            r.setTime(d);
+            String r = dateFormat.format(d);
             s = new Status(definedUser, "The truth is an acquired taste.", null, r, null);
             feed.add(s);
 
             // --------------------- 19 --------------------- //
             d = createDate(2020, 8, 17, 9, 55);
-            Calendar sa = Calendar.getInstance();
-            sa.setTime(d);
+            String sa = dateFormat.format(d);
             s = new Status(definedUser, "Encuentra la buena vida baby! #CoronaLite", null, sa, null);
             feed.add(s);
 
             // --------------------- 20 --------------------- //
             d = createDate(2020, 0, 27, 23, 55);
-            Calendar t = Calendar.getInstance();
-            t.setTime(d);
+            String t = dateFormat.format(d);
             s = new Status(definedUser, "Me calle bien el Snoop Dogg", null, t, null);
             feed.add(s);
 
             // --------------------- 21 --------------------- //
             d = createDate(2020, 3, 7, 9, 4);
-            Calendar u = Calendar.getInstance();
-            u.setTime(d);
+            String u = dateFormat.format(d);
             s = new Status(definedUser, "Hago buena musica", null, u, null);
             feed.add(s);
         }

@@ -9,13 +9,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.UpdateFollowRequest;
-import edu.byu.cs.tweeter.model.service.response.SubmitTweetResponse;
 import edu.byu.cs.tweeter.model.service.response.UpdateFollowResponse;
-import edu.byu.cs.tweeter.view.asyncTasks.UpdateFollowTask;
 
 public class UpdateFollowServiceTest {
 
@@ -54,7 +51,7 @@ public class UpdateFollowServiceTest {
         // Setup a mock ServerFacade that will return known responses
         followSuccessResponse = new UpdateFollowResponse(user, followThisUser, follow_following);
         unFollowSuccessResponse = new UpdateFollowResponse(user, unFollowThisUser, unFollow_following);
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         Mockito.when(mockServerFacade.updateFollow(validRequestFollow)).thenReturn(followSuccessResponse);
         Mockito.when(mockServerFacade.updateFollow(validRequestUnFollow)).thenReturn(unFollowSuccessResponse);
 
@@ -93,7 +90,7 @@ public class UpdateFollowServiceTest {
 
 
     private List<User> getFollowing() {
-        ServerFacade sf = new ServerFacade();
+        ServerFacadeMine sf = new ServerFacadeMine();
         List<User> returnMe = new ArrayList<>(sf.getDummyFollowees());
         return returnMe;
     }

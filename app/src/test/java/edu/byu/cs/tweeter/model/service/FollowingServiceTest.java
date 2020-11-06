@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.service.response.FollowingResponse;
 
@@ -44,7 +44,7 @@ public class FollowingServiceTest {
 
         // Setup a mock ServerFacade that will return known responses
         successResponse = new FollowingResponse(Arrays.asList(resultUser1, resultUser2, resultUser3), false);
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         Mockito.when(mockServerFacade.getFollowees(validRequest)).thenReturn(successResponse);
 
         failureResponse = new FollowingResponse("An exception occured");
@@ -57,7 +57,7 @@ public class FollowingServiceTest {
 
     /**
      * Verify that for successful requests the {@link FollowingService#getFollowees(FollowingRequest)}
-     * method returns the same result as the {@link ServerFacade}.
+     * method returns the same result as the {@link ServerFacadeMine}.
      * .
      *
      * @throws IOException if an IO error occurs.
@@ -85,7 +85,7 @@ public class FollowingServiceTest {
 
     /**
      * Verify that for failed requests the {@link FollowingService#getFollowees(FollowingRequest)}
-     * method returns the same result as the {@link ServerFacade}.
+     * method returns the same result as the {@link ServerFacadeMine}.
      *
      * @throws IOException if an IO error occurs.
      */

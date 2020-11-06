@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.ServerFacadeMine;
 import edu.byu.cs.tweeter.model.service.request.CountRequest;
 import edu.byu.cs.tweeter.model.service.response.CountResponse;
 
@@ -32,7 +32,7 @@ public class CountServiceTest {
 
         // Setup a mock ServerFacade that will return known responses
         successResponse = new CountResponse(currentUser, followingCount, followersCount );
-        ServerFacade mockServerFacade = Mockito.mock(ServerFacade.class);
+        ServerFacadeMine mockServerFacade = Mockito.mock(ServerFacadeMine.class);
         Mockito.when(mockServerFacade.getCount(validRequest)).thenReturn(successResponse);
 
         failureResponse = new CountResponse("An exception occured");

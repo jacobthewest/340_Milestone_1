@@ -7,14 +7,14 @@ import java.util.List;
 
 public class MentionParser {
     private String tweetText;
-    private List<String> mentions;
+    private String mentions;
 
     public MentionParser(String tweetText) {
         this.tweetText = tweetText;
-        this.mentions = new ArrayList<>();
+        this.mentions = "";
     }
 
-    public List<String> parse() {
+    public String parse() {
         // separate input by spaces ( URLs don't have spaces )
         String [] parts = tweetText.split("\\s+");
 
@@ -22,7 +22,12 @@ public class MentionParser {
         for( String item : parts ) {
             if(hasAlias(item)) {
                 String alias = extractAlias(item);
-                mentions.add(alias);
+                if(mentions.equals("")) {
+                    mentions += alias;
+                } else {
+                    mentions += " ";
+                    mentions += alias;
+                }
             }
         }
         return this.mentions;

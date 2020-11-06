@@ -13,6 +13,8 @@ import androidx.fragment.app.DialogFragment;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +26,7 @@ import edu.byu.cs.tweeter.model.service.request.SubmitTweetRequest;
 import edu.byu.cs.tweeter.model.service.response.SubmitTweetResponse;
 import edu.byu.cs.tweeter.presenter.SubmitTweetPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.SubmitTweetTask;
+import edu.byu.cs.tweeter.view.util.DatePrinter;
 import edu.byu.cs.tweeter.view.util.MentionParser;
 import edu.byu.cs.tweeter.view.util.UrlParser;
 
@@ -102,9 +105,9 @@ public class TweetFragment extends DialogFragment implements View.OnClickListene
         UrlParser urlParser = new UrlParser(tweetText);
         MentionParser mentionParser = new MentionParser(tweetText);
 
-        Calendar currentTime = getCurrentTime();
-        List<String> mentions = mentionParser.parse();
-        List<String> urls = urlParser.parse();
+        String currentTime = getCurrentTime();
+        String mentions = mentionParser.parse();
+        String urls = urlParser.parse();
 
         Status status = new Status(user, tweetText, urls, currentTime, mentions);
         SubmitTweetRequest submitTweetRequest = new SubmitTweetRequest(user, status);
@@ -112,14 +115,24 @@ public class TweetFragment extends DialogFragment implements View.OnClickListene
     }
 
     /**
+     * Makes the date into the correct string format
+     * @param cal
+     * @return A readable date as a string
+     */
+    private String formulateTimePosted(Calendar cal) {
+        DatePrinter datePrinter = new DatePrinter(cal);
+        return datePrinter.toString();
+    }
+
+    /**
      * Get's the current time.
      * @return a Calendar object of the current time.
      */
-    private Calendar getCurrentTime() {
-        Calendar tempCal = Calendar.getInstance();
+    private String getCurrentTime() {
         Date date = new Date();
-        tempCal.setTime(date);
-        return tempCal;
+        DateFormat dateFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
+        String formattedDate = dateFormat.format(date);
+        return formattedDate;
     }
 
     /**
